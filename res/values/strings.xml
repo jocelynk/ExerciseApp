@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ExerciseApp</string>
+    <string name="workout_routines">Workout Routines</string>
+    <string name="no_workouts">You have no workouts.</string>
+    <string name="menu_insert_workout">Add Workout</string>
+    <string name="enter_workout">Enter Workout</string>
+     <string name="menu_view">View</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_delete">Delete</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+     <string name="workout_routine_add_title">Add Workout</string>
+    <string name="workout_routine_edit_title">Edit Workout</string>
+    <string name="workout_routine_view_title">View Workout</string>
+    <string name="workout_exercise_add_title">Add Exercise</string>
+
+</resources>
