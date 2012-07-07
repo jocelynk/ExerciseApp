@@ -11,6 +11,7 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -153,14 +154,29 @@ public class WREditActivity extends SherlockActivity {
 	private void populateFields() {
 		if (mRowId != null) {
 			//query from provider here
-			Cursor workout = mDbAdapter.fetchWorkout(mRowId);
-			startManagingCursor(workout);
+			
+			//Cursor workout = mDbAdapter.fetchWorkout(mRowId);
+			//startManagingCursor(workout);
+			
+			String projection[] = new String[] {
+					WorkoutRoutineTable.COLUMN_ID,
+					WorkoutRoutineTable.COLUMN_NAME,
+					WorkoutRoutineTable.COLUMN_DESCRIPTION };
+			
+			String selection = WorkoutRoutineTable.COLUMN_ID + " = ? ";
+			String[] selectionArgs = new String[] { String.valueOf(mRowId) };
+			Cursor workout = getContentResolver().query(Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), projection, selection, selectionArgs, null);
+		
 			mNameText.setText(workout.getString(workout
 					.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_NAME)));
 			mDescriptionText
 					.setText(workout.getString(workout
 							.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_DESCRIPTION)));
 		}
+		
+		
+		
+		
 	}
 
 	private void saveState() {
@@ -189,11 +205,19 @@ public class WREditActivity extends SherlockActivity {
 			}
 		} else  {
 			if (!TextUtils.isEmpty(name)) {
-				//need to create update in ExerciseAppProvider
-			mDbAdapter.updateWorkout(mRowId, name, description);
-			toast.show();
-			saved = true;
+				
+			//mDbAdapter.updateWorkout(mRowId, name, description);
+				
+				ContentValues values = new ContentValues();
+				values.put(WorkoutRoutineTable.COLUMN_NAME, name);
+				values.put(WorkoutRoutineTable.COLUMN_DESCRIPTION, description);
+				String selection = WorkoutRoutineTable.COLUMN_ID + " = ";
+				String[] selectionArgs = new String[] { String.valueOf(mRowId) };
+				getContentResolver().update(Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), values, selection, selectionArgs);
+				toast.show();
+				saved = true;
 			}
+			
 
 		}
 

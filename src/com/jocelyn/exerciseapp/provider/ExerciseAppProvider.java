@@ -142,9 +142,30 @@ public class ExerciseAppProvider extends ContentProvider {
 	
 
 	@Override
-	public int update(Uri arg0, ContentValues arg1, String arg2, String[] arg3) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	   public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) 
+	   {
+	      int count = 0;
+	      switch (sURIMatcher.match(uri)){
+	         case WORKOUTS:
+	            count = mDB.getWritableDatabase().update(
+	            		WorkoutRoutineTable.TABLE_WORKOUTROUTINE, 
+	            		values, 
+	            		selection, 
+	            		selectionArgs);
+	            break;
+	         case WORKOUT_ID:                
+	            count = mDB.getWritableDatabase().update(
+	            		WorkoutRoutineTable.TABLE_WORKOUTROUTINE, 
+	            		values,
+	            		WorkoutRoutineTable.COLUMN_ID + " = " + uri.getLastPathSegment()
+	            		+ (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), 
+	            		selectionArgs);
+	            break;
+	         default: throw new IllegalArgumentException(
+	            "Unknown URI " + uri);    
+	      }       
+	      getContext().getContentResolver().notifyChange(uri, null);
+	      return count;
+	   }
 
 }
