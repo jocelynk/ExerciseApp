@@ -1,22 +1,33 @@
 package com.jocelyn.exerciseapp;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import com.jocelyn.exerciseapp.R;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
 import com.jocelyn.exerciseapp.provider.ExerciseAppProvider;
 
-public class WRListActivity extends SherlockListActivity {
+@TargetApi(11)
+public class WRListActivity extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	private static final String TAG = "WRListActivity";
 	private static final boolean DEBUG = true;
@@ -24,8 +35,10 @@ public class WRListActivity extends SherlockListActivity {
 	private static final int ACTIVITY_CREATE = 0;
 	private static final int ACTIVITY_VIEW = 1;
 	private static final int ACTIVITY_EDIT = 2;
-
-	private static final int INSERT_ID = Menu.FIRST;
+	private static final int WR_LIST_LOADER = 0x01;
+	//private static final int INSERT_ID = Menu.FIRST;
+	
+	private SimpleCursorAdapter adapter;
 	
 	// suggested by alex. pass these to "add/edit" workout activity
 	//   so that it will know whether to display "add workout" or
@@ -42,17 +55,43 @@ public class WRListActivity extends SherlockListActivity {
 	    
 	    getSupportActionBar().setDisplayShowTitleEnabled(false); 
 	    
-	    String[] projection = { WorkoutRoutineTable.COLUMN_ID, WorkoutRoutineTable.COLUMN_NAME, WorkoutRoutineTable.COLUMN_DESCRIPTION };
+	    //String[] projection = { WorkoutRoutineTable.COLUMN_ID, WorkoutRoutineTable.COLUMN_NAME, WorkoutRoutineTable.COLUMN_DESCRIPTION };
 	    String[] uiBindFrom = { WorkoutRoutineTable.COLUMN_NAME };
 	    int[] uiBindTo = { R.id.text1 };
+	    
+	    adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.workouts_row,
+	            null, uiBindFrom, uiBindTo,0);
+	    
+	    //Cursor workouts = managedQuery(
+	      //      ExerciseAppProvider.CONTENT_URI, projection, null, null, null);
 	 
-	    Cursor workouts = managedQuery(
-	            ExerciseAppProvider.CONTENT_URI, projection, null, null, null);
+	   // CursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.workouts_row, workouts,
+	     //       uiBindFrom, uiBindTo);
 	 
-	    CursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.workouts_row, workouts,
-	            uiBindFrom, uiBindTo);
-	 
-	    setListAdapter(adapter);
+	    final Intent i = new Intent(this, WRViewActivity.class);		
+	    final ListView lv = (ListView) findViewById(android.R.id.list);
+	    
+		lv.setAdapter(adapter);
+		lv.setEmptyView(findViewById(android.R.id.empty));
+
+		lv.setClickable(true);
+		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+		    public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
+
+		       Object o = lv.getItemAtPosition(position);
+				i.putExtra(WorkoutRoutineTable.COLUMN_ID, id);
+				startActivityForResult(i, ACTIVITY_VIEW);
+		    }
+		 });
+
+		   
+		   
+	    //setListAdapter(adapter);
+	    getSupportLoaderManager().initLoader(WR_LIST_LOADER, null, this);
+	    registerForContextMenu(lv);
+	    //registerForContextMenu(getListView());
 	}
 	
 	@Override
@@ -81,6 +120,49 @@ public class WRListActivity extends SherlockListActivity {
 		
 	}
 	
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		getMenuInflater().inflate(R.menu.workoutroutine_context_menu, menu);
+	}
+
+	@Override
+	public boolean onContextItemSelected(android.view.MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		//Cursor c = mDbAdapter.fetchWRE(info.id);
+
+		switch (item.getItemId()) {
+		case R.id.menu_delete:
+			getContentResolver().delete(Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(info.id)), null, null);
+			
+			//mDbAdapter.deleteRecordByWR(info.id);
+			//mDbAdapter.deleteWorkoutExercise(info.id);
+			//mDbAdapter.deleteWorkout(info.id);
+
+			/*
+			 * while (c.isAfterLast() == false) { Log.v(TAG, "Infinite loop");
+			 * long rowId = c.getLong(c
+			 * .getColumnIndexOrThrow(WorkoutRoutineExerciseTable.COLUMN_ID));
+			 * mDbAdapter.deleteRecordsByWRE(rowId); }
+			 */
+			//fillData();
+			return true;
+		case R.id.menu_edit:
+			Intent j = new Intent(this, WREditActivity.class);
+			j.putExtra(WorkoutRoutineTable.COLUMN_ID, info.id);
+			
+			// suggested by alex
+			j.putExtra(LAUNCH_WORKOUT, EDIT_REQUEST);
+			
+			startActivityForResult(j, ACTIVITY_EDIT);
+			return true;
+		}
+		return super.onContextItemSelected(item);
+	}
+	
 	public void createWorkout() {
 		Intent i = new Intent(this, WREditActivity.class);
 		
@@ -90,14 +172,13 @@ public class WRListActivity extends SherlockListActivity {
 		startActivityForResult(i, ACTIVITY_CREATE);
 	}
 	
-	
-	@Override
+	/*
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Intent i = new Intent(this, WRViewActivity.class);		
 		i.putExtra(WorkoutRoutineTable.COLUMN_ID, id);
 		startActivityForResult(i, ACTIVITY_VIEW);
-	}
+	}*/
 
 
 	@Override
@@ -111,6 +192,24 @@ public class WRListActivity extends SherlockListActivity {
 		Log.d(TAG, "Destroying View ...");
 		//mDbAdapter.close();
 		super.onDestroy();
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		String[] projection = { WorkoutRoutineTable.COLUMN_ID, WorkoutRoutineTable.COLUMN_NAME, WorkoutRoutineTable.COLUMN_DESCRIPTION };	 
+	    CursorLoader cursorLoader = new CursorLoader(this,
+	            ExerciseAppProvider.CONTENT_URI, projection, null, null, null);
+	    return cursorLoader;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+	    adapter.swapCursor(cursor);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+	    adapter.swapCursor(null);
 	}
 	
 }

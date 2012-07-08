@@ -1,11 +1,10 @@
 package com.jocelyn.exerciseapp;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.jocelyn.exerciseapp.data.ExerciseDB;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
 import com.jocelyn.exerciseapp.provider.ExerciseAppProvider;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -14,6 +13,9 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -22,10 +24,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
-public class WREditActivity extends SherlockActivity {
+public class WREditActivity extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>  {
 	
 	private static final String TAG = "WorkoutRoutineEdit";
 	private static final boolean DEBUG = true;
+	private static final int WR_EDIT = 0;
+	private static final int WR_CREATE = 1;
 
 	private ExerciseDB mDB;
 	private EditText mNameText;
@@ -47,19 +51,21 @@ public class WREditActivity extends SherlockActivity {
 		Button confirmButton = (Button) findViewById(R.id.confirm);
 		Button cancelButton = (Button) findViewById(R.id.cancel);
 
-		mRowId = (savedInstanceState == null) ? null
+		/*mRowId = (savedInstanceState == null) ? null
 				: (Long) savedInstanceState
-						.getSerializable(WorkoutRoutineTable.COLUMN_ID);
-
+						.getSerializable(WorkoutRoutineTable.COLUMN_ID);*/
 		if (mRowId == null) {
 			// suggested by alex
 			mRowId = getIntent()
 					.getLongExtra(WorkoutRoutineTable.COLUMN_ID, -1);
-			if (mRowId == -1)
+			if (mRowId == -1) {
 				mRowId = null;
-		}
+			} else {
+				getSupportLoaderManager().initLoader(WR_EDIT, null, this);
+			}
+		}		
 
-		// suggeseted by alex.
+		// suggested by alex.
 		getSupportActionBar().setDisplayUseLogoEnabled(false);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -74,8 +80,8 @@ public class WREditActivity extends SherlockActivity {
 			getSupportActionBar().setTitle(R.string.workout_routine_edit_title);
 		}
 
-		populateFields();
-
+		//populateFields();
+		
 		confirmButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View view) {
@@ -89,9 +95,6 @@ public class WREditActivity extends SherlockActivity {
 					Toast toast = Toast.makeText(getApplicationContext(), "Please fill in fields.", Toast.LENGTH_SHORT);
 					toast.show();
 				}
-				
-				
-				
 			}
 
 		});
@@ -148,36 +151,26 @@ public class WREditActivity extends SherlockActivity {
 	protected void onResume() {
 		super.onResume();
 		Log.v(TAG, "+ ON RESUME +");
-		populateFields();
+		//populateFields();
 	}
 
-	private void populateFields() {
+	/*private void populateFields() {
 		if (mRowId != null) {
 			//query from provider here
 			
 			//Cursor workout = mDbAdapter.fetchWorkout(mRowId);
 			//startManagingCursor(workout);
 			
-			String projection[] = new String[] {
-					WorkoutRoutineTable.COLUMN_ID,
-					WorkoutRoutineTable.COLUMN_NAME,
-					WorkoutRoutineTable.COLUMN_DESCRIPTION };
-			
-			String selection = WorkoutRoutineTable.COLUMN_ID + " = ? ";
-			String[] selectionArgs = new String[] { String.valueOf(mRowId) };
-			Cursor workout = getContentResolver().query(Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), projection, selection, selectionArgs, null);
-		
-			mNameText.setText(workout.getString(workout
-					.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_NAME)));
-			mDescriptionText
-					.setText(workout.getString(workout
-							.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_DESCRIPTION)));
-		}
-		
-		
-		
-		
-	}
+			Cursor workout = getContentResolver().query(Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), null, null, null, null);
+				
+			if (workout != null && workout.moveToFirst()) {
+				mNameText.setText(workout.getString(workout
+						.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_NAME)));
+				mDescriptionText.setText(workout.getString(workout.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_DESCRIPTION)));
+				workout.close();
+			}	
+		}	
+	}*/
 
 	private void saveState() {
 		String name = mNameText.getText().toString();
@@ -194,13 +187,12 @@ public class WREditActivity extends SherlockActivity {
 				ContentValues values = new ContentValues();
 				values.put(WorkoutRoutineTable.COLUMN_NAME, name);
 				values.put(WorkoutRoutineTable.COLUMN_DESCRIPTION, description);
-		        Uri uri = getContentResolver().insert(ExerciseAppProvider.CONTENT_URI, values);
+		        getContentResolver().insert(ExerciseAppProvider.CONTENT_URI, values);
 				//long id = mDbAdapter.createWorkout(name, description);
 				/*if (id > 0) {
 					mRowId = id;
-				}
-				toast.show();
-				saved = true;*/
+				}*/
+		        saved = true;
 		        toast.show();
 			}
 		} else  {
@@ -214,13 +206,44 @@ public class WREditActivity extends SherlockActivity {
 				String selection = WorkoutRoutineTable.COLUMN_ID + " = ";
 				String[] selectionArgs = new String[] { String.valueOf(mRowId) };
 				getContentResolver().update(Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), values, selection, selectionArgs);
-				toast.show();
 				saved = true;
+				toast.show();
 			}
 			
 
 		}
 
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		//CursorLoader workout;
+		//switch(id) {
+		//case WR_EDIT:
+			CursorLoader workout = new CursorLoader(this, Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), null, null, null, null);
+		//case WR_CREATE:
+			//workout = new CursorLoader(this, ExerciseAppProvider.CONTENT_URI, null, null, null, null);
+		//default:
+			//workout = new CursorLoader(this, ExerciseAppProvider.CONTENT_URI, null, null, null, null);
+
+		//}
+
+		return workout;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		if (cursor != null && cursor.moveToFirst()) {
+			mNameText.setText(cursor.getString(cursor
+					.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_NAME)));
+			mDescriptionText.setText(cursor.getString(cursor.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_DESCRIPTION)));
+			cursor.close();
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+	    //adapter.swapCursor(null);
 	}
 
 }

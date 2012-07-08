@@ -10,12 +10,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.jocelyn.exerciseapp.data.ExerciseDB;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
 
 public class ExerciseAppProvider extends ContentProvider {
 	
+	public static final String TAG = "ExerciseAppProvider";
 	private static final String AUTHORITY = "com.jocelyn.exerciseapp.provider";
 	public static final int WORKOUTS = 100;
 	public static final int WORKOUT_ID = 110;
@@ -58,6 +60,7 @@ public class ExerciseAppProvider extends ContentProvider {
 	    case WORKOUT_ID:
 	        queryBuilder.appendWhere(WorkoutRoutineTable.COLUMN_ID + "="
 	                + uri.getLastPathSegment());
+	        
 	        break;
 	    case WORKOUTS:
 	        // no filter

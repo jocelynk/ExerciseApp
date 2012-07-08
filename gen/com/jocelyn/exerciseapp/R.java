@@ -838,6 +838,8 @@ containing a value of this type.
         public static final int homeAsUp=0x7f040006;
         public static final int listMode=0x7f040002;
         public static final int listview=0x7f04002c;
+        public static final int menu_delete=0x7f040030;
+        public static final int menu_edit=0x7f04002f;
         public static final int name=0x7f040028;
         public static final int nameview=0x7f040027;
         public static final int normal=0x7f040001;
@@ -882,6 +884,7 @@ containing a value of this type.
     }
     public static final class menu {
         public static final int workout_index_options_menu=0x7f0b0000;
+        public static final int workoutroutine_context_menu=0x7f0b0001;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 

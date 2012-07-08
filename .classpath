@@ -14,5 +14,6 @@
 			<accessrule kind="nonaccessible" pattern="com/android/internal/**"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files (x86)/Android/android-sdk/extras/JakeWharton-ActionBarSherlock-1a51cf7/library/bin/com_actionbarsherlock.jar" sourcepath="/com_actionbarsherlock/src"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
