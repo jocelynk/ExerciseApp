@@ -80,7 +80,7 @@ public class WRListActivity extends SherlockFragmentActivity implements LoaderMa
 			@Override
 		    public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
 
-		       Object o = lv.getItemAtPosition(position);
+		      // Object o = lv.getItemAtPosition(position);
 				i.putExtra(WorkoutRoutineTable.COLUMN_ID, id);
 				startActivityForResult(i, ACTIVITY_VIEW);
 		    }

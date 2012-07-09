@@ -17,6 +17,7 @@
     <string name="workout_routine_edit_title">Edit Workout</string>
     <string name="workout_routine_view_title">View Workout</string>
     <string name="workout_exercise_add_title">Add Exercise</string>
+    <string name="no_exercises">You have no exercises.</string>
     
 
 </resources>

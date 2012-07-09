@@ -880,7 +880,8 @@ containing a value of this type.
         public static final int sherlock_spinner_item=0x7f030016;
         public static final int workouts_edit=0x7f030017;
         public static final int workouts_index=0x7f030018;
-        public static final int workouts_row=0x7f030019;
+        public static final int workouts_options=0x7f030019;
+        public static final int workouts_row=0x7f03001a;
     }
     public static final class menu {
         public static final int workout_index_options_menu=0x7f0b0000;
@@ -927,6 +928,7 @@ containing a value of this type.
         public static final int menu_insert_workout=0x7f09000d;
         public static final int menu_view=0x7f09000f;
         public static final int name=0x7f090012;
+        public static final int no_exercises=0x7f09001a;
         public static final int no_workouts=0x7f09000c;
         public static final int workout_exercise_add_title=0x7f090019;
         public static final int workout_routine_add_title=0x7f090016;
