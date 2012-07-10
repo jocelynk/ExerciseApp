@@ -1,32 +1,28 @@
 package com.jocelyn.exerciseapp;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
 import com.jocelyn.exerciseapp.provider.ExerciseAppProvider;
 
-@TargetApi(11)
+
 public class WRListActivity extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	private static final String TAG = "WRListActivity";
@@ -59,8 +55,7 @@ public class WRListActivity extends SherlockFragmentActivity implements LoaderMa
 	    String[] uiBindFrom = { WorkoutRoutineTable.COLUMN_NAME };
 	    int[] uiBindTo = { R.id.text1 };
 	    
-	    adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.workouts_row,
-	            null, uiBindFrom, uiBindTo,0);
+	    adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.workouts_row, null, uiBindFrom, uiBindTo,0);
 	    
 	    //Cursor workouts = managedQuery(
 	      //      ExerciseAppProvider.CONTENT_URI, projection, null, null, null);

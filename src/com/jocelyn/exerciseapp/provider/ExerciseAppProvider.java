@@ -22,6 +22,8 @@ public class ExerciseAppProvider extends ContentProvider {
 	public static final int WORKOUTS = 100;
 	public static final int WORKOUT_ID = 110;
 	
+	
+	
 	private static final String WORKOUT_BASE_PATH = "workouts";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
 	        + "/" + WORKOUT_BASE_PATH);
