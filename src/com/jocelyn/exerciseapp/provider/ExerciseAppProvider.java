@@ -1,11 +1,14 @@
 package com.jocelyn.exerciseapp.provider;
 
+import java.util.Arrays;
+
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
@@ -13,37 +16,47 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.jocelyn.exerciseapp.data.ExerciseDB;
+import com.jocelyn.exerciseapp.data.ExerciseTable;
+import com.jocelyn.exerciseapp.data.WorkoutRoutineExerciseTable;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Exercises;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercises;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
 
 public class ExerciseAppProvider extends ContentProvider {
 	
 	public static final String TAG = "ExerciseAppProvider";
-	private static final String AUTHORITY = "com.jocelyn.exerciseapp.provider";
-	public static final int WORKOUTS = 100;
-	public static final int WORKOUT_ID = 110;
-	
-	
-	
-	private static final String WORKOUT_BASE_PATH = "workouts";
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-	        + "/" + WORKOUT_BASE_PATH);
-	//for other tables, need to create new content_URI, or see how more advanced content providers do it, do they create interface?
-	// or put in separate class constructor
-	
-	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-	        + "/workout_routine";
-	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-	        + "/workout_routine";
 	
 	private ExerciseDB mDB;
+	
+	private static final UriMatcher sURIMatcher;
 
-	private static final UriMatcher sURIMatcher = new UriMatcher(
-	        UriMatcher.NO_MATCH);
+	//Workouts Table
+	public static final int WORKOUTS = 100;
+	public static final int WORKOUT_ID = 101;
+	
+	//Exercises Table
+	public static final int EXERCISES = 200;
+	public static final int EXERCISE_ID = 201;
+	
+	//WR Exercises Table
+	public static final int WR_EXERCISES = 300;
+	public static final int WR_EXERCISE_ID = 301;
+
+	private static final boolean DEBUG = true;
+	
 	static {
-	    sURIMatcher.addURI(AUTHORITY, WORKOUT_BASE_PATH , WORKOUTS);
-	    sURIMatcher.addURI(AUTHORITY, WORKOUT_BASE_PATH + "/#", WORKOUT_ID);
+		sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutPath() , WORKOUTS);
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutPath() + "/#", WORKOUT_ID);
+	    
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getExercisesPath() , EXERCISES);
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getExercisesPath() + "/#", EXERCISE_ID);
+	
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() , WR_EXERCISES);
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() + "/#", WR_EXERCISE_ID);
 	}
-
+	//need to think about uri for joining tables
 	
 	@Override
     public boolean onCreate() {
@@ -52,44 +65,41 @@ public class ExerciseAppProvider extends ContentProvider {
     }
 	
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection,
-	        String[] selectionArgs, String sortOrder) {
-	    SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-	    queryBuilder.setTables(WorkoutRoutineTable.TABLE_WORKOUTROUTINE);
-	 
-	    int uriType = sURIMatcher.match(uri);
-	    switch (uriType) {
-	    case WORKOUT_ID:
-	        queryBuilder.appendWhere(WorkoutRoutineTable.COLUMN_ID + "="
-	                + uri.getLastPathSegment());
-	        
-	        break;
+	public String getType(Uri uri) {
+		switch (sURIMatcher.match(uri)) {
 	    case WORKOUTS:
-	        // no filter
-	        break;
+	    	return Workouts.CONTENT_TYPE;
+	    case WORKOUT_ID:
+	        return Workouts.CONTENT_ITEM_TYPE;
+	    case EXERCISES:
+	    	return Exercises.CONTENT_TYPE;
+	    case EXERCISE_ID:
+	        return Exercises.CONTENT_ITEM_TYPE;
+	    case WR_EXERCISES:
+	    	return WRExercises.CONTENT_TYPE; //need to think about uri for joining tables
+	    case WR_EXERCISE_ID:
+	        return WRExercises.CONTENT_ITEM_TYPE;
 	    default:
-	        throw new IllegalArgumentException("Unknown URI");
+	        throw new IllegalArgumentException("Unknown URI " + uri);
 	    }
-	 
-	    Cursor cursor = queryBuilder.query(mDB.getReadableDatabase(),
-	            projection, selection, selectionArgs, null, null, sortOrder);
-	    cursor.setNotificationUri(getContext().getContentResolver(), uri);
-	    return cursor;
 	}
-	
 	
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
+		if (DEBUG) Log.v(TAG, "delete(uri=" + uri + ")");
+		
 		int uriType = sURIMatcher.match(uri);
 	    SQLiteDatabase sqlDB = mDB.getWritableDatabase();
 	    int rowsAffected = 0;
+	    String id;
+	    
 	    switch (uriType) {
 	    case WORKOUTS:
 	        rowsAffected = sqlDB.delete(WorkoutRoutineTable.TABLE_WORKOUTROUTINE,
 	                selection, selectionArgs);
 	        break;
 	    case WORKOUT_ID:
-	        String id = uri.getLastPathSegment();
+	        id = uri.getLastPathSegment();
 	        if (TextUtils.isEmpty(selection)) {
 	            rowsAffected = sqlDB.delete(WorkoutRoutineTable.TABLE_WORKOUTROUTINE,
 	            		WorkoutRoutineTable.COLUMN_ID + "=" + id, null);
@@ -99,38 +109,69 @@ public class ExerciseAppProvider extends ContentProvider {
 	                    selectionArgs);
 	        }
 	        break;
+	    case EXERCISES:
+	        rowsAffected = sqlDB.delete(ExerciseTable.TABLE_EXERCISE,
+	                selection, selectionArgs);
+	        break;
+	    case EXERCISE_ID:
+	        id = uri.getLastPathSegment();
+	        if (TextUtils.isEmpty(selection)) {
+	            rowsAffected = sqlDB.delete(ExerciseTable.TABLE_EXERCISE,
+	            		ExerciseTable.COLUMN_ID + "=" + id, null);
+	        } else {
+	            rowsAffected = sqlDB.delete(ExerciseTable.TABLE_EXERCISE,
+	                    selection + " and " + ExerciseTable.COLUMN_ID + "=" + id,
+	                    selectionArgs);
+	        }
+	        break;
+	    case WR_EXERCISES:
+	        rowsAffected = sqlDB.delete(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE,
+	                selection, selectionArgs);
+	        break;
+	    case WR_EXERCISE_ID:
+	        id = uri.getLastPathSegment();
+	        if (TextUtils.isEmpty(selection)) {
+	            rowsAffected = sqlDB.delete(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE,
+	            		WorkoutRoutineExerciseTable.COLUMN_ID + "=" + id, null);
+	        } else {
+	            rowsAffected = sqlDB.delete(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE,
+	                    selection + " and " + WorkoutRoutineExerciseTable.COLUMN_ID + "=" + id,
+	                    selectionArgs);
+	        }
+	        break;
 	    default:
 	        throw new IllegalArgumentException("Unknown or Invalid URI " + uri);
 	    }
 	    getContext().getContentResolver().notifyChange(uri, null);
 	    return rowsAffected;
 	}
-
-	@Override
-	public String getType(Uri uri) {
-		switch (sURIMatcher.match(uri)) {
-	    case WORKOUTS:
-	    	return CONTENT_TYPE;
-	    case WORKOUT_ID:
-	        return CONTENT_ITEM_TYPE;
-	    default:
-	        throw new IllegalArgumentException("Unknown URI " + uri);
-	    }
-	}
+	
 
 	@Override
 	//equivalent to createWorkout method below
 	public Uri insert(Uri uri, ContentValues values) {
+		if (DEBUG) Log.v(TAG, "insert(uri=" + uri + ", values=" + values.toString() + ")");
+		long rowId; 
+		Uri newUri;
+		
+		
 		switch (sURIMatcher.match(uri)) {
 		case WORKOUTS:
-			long rowID = mDB.getWritableDatabase().insert(WorkoutRoutineTable.TABLE_WORKOUTROUTINE , "", values);
-        if (rowID > 0) {
-            Uri _uri = ContentUris.withAppendedId(CONTENT_URI, rowID);
-            getContext().getContentResolver().notifyChange(_uri, null);
-            return _uri;
+			rowId = mDB.getWritableDatabase().insert(WorkoutRoutineTable.TABLE_WORKOUTROUTINE , "", values);
+        if (rowId > 0) {
+        	newUri = Workouts.buildWorkoutIdUri(""+rowId);
+            getContext().getContentResolver().notifyChange(newUri, null);
+            return newUri;
+        }
+		case WR_EXERCISES:
+			rowId = mDB.getWritableDatabase().insert(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE , "", values);
+        if (rowId > 0) {
+        	newUri = WRExercises.buildWRExerciseIdUri(""+rowId);
+            getContext().getContentResolver().notifyChange(newUri, null);
+            return newUri;
         }
 		default: 
-            throw new UnsupportedOperationException("URI: " + uri + " not supported.");
+			throw new SQLException("Failed to insert row into " + uri);
         }
 	}
 	/*
@@ -143,29 +184,85 @@ public class ExerciseAppProvider extends ContentProvider {
 				initialValues);
 	}*/
 
+	
+	@Override
+	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+		if (DEBUG) {
+	         Log.v(TAG, "query(uri=" + uri + ", proj=" + Arrays.toString(projection) +
+	         ", selection=" + selection + ", selectionArgs=" + Arrays.toString(selectionArgs) +
+	         ", sortOrder=" + sortOrder + ")");
+	        }
+		
+		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+	    qb.setTables(WorkoutRoutineTable.TABLE_WORKOUTROUTINE);
+	 
+	    int uriType = sURIMatcher.match(uri);
+	    switch (uriType) {
+	    case WORKOUT_ID:
+		    qb.setTables(WorkoutRoutineTable.TABLE_WORKOUTROUTINE);
+	        qb.appendWhere(WorkoutRoutineTable.COLUMN_ID + "=" + uri.getLastPathSegment());
+	        break;
+	    case WORKOUTS:
+		    qb.setTables(WorkoutRoutineTable.TABLE_WORKOUTROUTINE);
+	        break;
+	    case EXERCISE_ID:
+		    qb.setTables(ExerciseTable.TABLE_EXERCISE);
+	        qb.appendWhere(ExerciseTable.COLUMN_ID + "=" + uri.getLastPathSegment());
+	        break;
+	    case EXERCISES:
+		    qb.setTables(ExerciseTable.TABLE_EXERCISE);
+	        break;
+	    case WR_EXERCISE_ID:
+		    qb.setTables(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE);
+	        qb.appendWhere(WorkoutRoutineExerciseTable.COLUMN_ID + "=" + uri.getLastPathSegment());
+	        
+	        break;
+	    case WR_EXERCISES:
+		    qb.setTables(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE);
+	        break;
+	    default:
+	        throw new IllegalArgumentException("Unknown URI");
+	    }
+	 
+	    Cursor cursor = qb.query(mDB.getReadableDatabase(),
+	            projection, selection, selectionArgs, null, null, sortOrder);
+	    cursor.setNotificationUri(getContext().getContentResolver(), uri);
+	    return cursor;
+	}
+	
 
 	
 
 	@Override
 	   public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) 
 	   {
+		if (DEBUG) Log.v(TAG, "update(uri=" + uri + ", values=" + values.toString() + ")");
+		
 	      int count = 0;
 	      switch (sURIMatcher.match(uri)){
-	         case WORKOUTS:
-	            count = mDB.getWritableDatabase().update(
-	            		WorkoutRoutineTable.TABLE_WORKOUTROUTINE, 
-	            		values, 
-	            		selection, 
-	            		selectionArgs);
-	            break;
-	         case WORKOUT_ID:                
-	            count = mDB.getWritableDatabase().update(
-	            		WorkoutRoutineTable.TABLE_WORKOUTROUTINE, 
-	            		values,
-	            		WorkoutRoutineTable.COLUMN_ID + " = " + uri.getLastPathSegment()
-	            		+ (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), 
-	            		selectionArgs);
-	            break;
+	      case WORKOUTS:
+	    	  count = mDB.getWritableDatabase().update(WorkoutRoutineTable.TABLE_WORKOUTROUTINE, values, selection, selectionArgs);
+	          break;
+	      case WORKOUT_ID:  	
+	         count = mDB.getWritableDatabase().update(
+	        		  WorkoutRoutineTable.TABLE_WORKOUTROUTINE, 
+	        		  values,
+	        		  WorkoutRoutineTable.COLUMN_ID + " = " + uri.getLastPathSegment()
+	        		  + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ")" : ""), 
+	        		  selectionArgs);
+	          break;
+	      case WR_EXERCISES:
+	    	  count = mDB.getWritableDatabase().update(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE, values, selection, selectionArgs);
+	          break;
+	      case WR_EXERCISE_ID:                
+	          count = mDB.getWritableDatabase().update(
+	        		  WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE, 
+	        		  values,
+	        		  WorkoutRoutineExerciseTable.COLUMN_ID + " = " + uri.getLastPathSegment()
+	        		  + (!TextUtils.isEmpty(selection) ? " AND (" + selection + ')' : ""), 
+	        		  selectionArgs);
+	          break;
+	            
 	         default: throw new IllegalArgumentException(
 	            "Unknown URI " + uri);    
 	      }       

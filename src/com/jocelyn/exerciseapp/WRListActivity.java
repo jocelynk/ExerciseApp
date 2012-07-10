@@ -2,7 +2,6 @@ package com.jocelyn.exerciseapp;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -20,7 +19,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
-import com.jocelyn.exerciseapp.provider.ExerciseAppProvider;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
 
 
 public class WRListActivity extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -131,7 +130,7 @@ public class WRListActivity extends SherlockFragmentActivity implements LoaderMa
 
 		switch (item.getItemId()) {
 		case R.id.menu_delete:
-			getContentResolver().delete(Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(info.id)), null, null);
+			getContentResolver().delete(Workouts.buildWorkoutIdUri(""+info.id), null, null);
 			
 			//mDbAdapter.deleteRecordByWR(info.id);
 			//mDbAdapter.deleteWorkoutExercise(info.id);
@@ -193,7 +192,7 @@ public class WRListActivity extends SherlockFragmentActivity implements LoaderMa
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		String[] projection = { WorkoutRoutineTable.COLUMN_ID, WorkoutRoutineTable.COLUMN_NAME, WorkoutRoutineTable.COLUMN_DESCRIPTION };	 
 	    CursorLoader cursorLoader = new CursorLoader(this,
-	            ExerciseAppProvider.CONTENT_URI, projection, null, null, null);
+	            Workouts.CONTENT_URI, projection, null, null, null);
 	    return cursorLoader;
 	}
 

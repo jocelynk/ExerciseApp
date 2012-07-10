@@ -3,6 +3,7 @@ package com.jocelyn.exerciseapp;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.jocelyn.exerciseapp.data.ExerciseDB;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
 import com.jocelyn.exerciseapp.provider.ExerciseAppProvider;
 
 import android.app.AlertDialog;
@@ -187,7 +188,7 @@ public class WREditActivity extends SherlockFragmentActivity implements LoaderMa
 				ContentValues values = new ContentValues();
 				values.put(WorkoutRoutineTable.COLUMN_NAME, name);
 				values.put(WorkoutRoutineTable.COLUMN_DESCRIPTION, description);
-		        getContentResolver().insert(ExerciseAppProvider.CONTENT_URI, values);
+		        getContentResolver().insert(Workouts.CONTENT_URI, values);
 				//long id = mDbAdapter.createWorkout(name, description);
 				/*if (id > 0) {
 					mRowId = id;
@@ -203,9 +204,9 @@ public class WREditActivity extends SherlockFragmentActivity implements LoaderMa
 				ContentValues values = new ContentValues();
 				values.put(WorkoutRoutineTable.COLUMN_NAME, name);
 				values.put(WorkoutRoutineTable.COLUMN_DESCRIPTION, description);
-				String selection = WorkoutRoutineTable.COLUMN_ID + " = ";
-				String[] selectionArgs = new String[] { String.valueOf(mRowId) };
-				getContentResolver().update(Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), values, selection, selectionArgs);
+				//String selection = WorkoutRoutineTable.COLUMN_ID + " = ";
+				//String[] selectionArgs = new String[] { String.valueOf(mRowId) };
+				getContentResolver().update(Workouts.buildWorkoutIdUri(""+mRowId), values, null, null);
 				saved = true;
 				toast.show();
 			}
@@ -220,7 +221,7 @@ public class WREditActivity extends SherlockFragmentActivity implements LoaderMa
 		//CursorLoader workout;
 		//switch(id) {
 		//case WR_EDIT:
-			CursorLoader workout = new CursorLoader(this, Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), null, null, null, null);
+			CursorLoader workout = new CursorLoader(this, Workouts.buildWorkoutIdUri(""+mRowId), null, null, null, null);
 		//case WR_CREATE:
 			//workout = new CursorLoader(this, ExerciseAppProvider.CONTENT_URI, null, null, null, null);
 		//default:

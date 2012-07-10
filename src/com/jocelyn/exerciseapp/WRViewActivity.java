@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
 import com.jocelyn.exerciseapp.provider.ExerciseAppProvider;
 
 public class WRViewActivity extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -50,7 +51,8 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		CursorLoader workout = new CursorLoader(this, Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), null, null, null, null);
+		//CursorLoader workout = new CursorLoader(this, Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), null, null, null, null);
+		CursorLoader workout = new CursorLoader(this, Workouts.buildWorkoutIdUri(""+mRowId), null, null, null, null);
 
 	    return workout;
 	}
