@@ -3,8 +3,7 @@ package com.jocelyn.exerciseapp.provider;
 import java.util.Arrays;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
-import android.content.ContentUris;
+
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -20,8 +19,11 @@ import com.jocelyn.exerciseapp.data.ExerciseTable;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineExerciseTable;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Exercises;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.ExercisesColumns;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercises;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercisesColumns;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WorkoutsColumns;
 
 public class ExerciseAppProvider extends ContentProvider {
 	
@@ -42,6 +44,10 @@ public class ExerciseAppProvider extends ContentProvider {
 	//WR Exercises Table
 	public static final int WR_EXERCISES = 300;
 	public static final int WR_EXERCISE_ID = 301;
+	
+	//Workout with Exercises
+	public static final int WR_ID_EXERCISES = 400;
+	
 
 	private static final boolean DEBUG = true;
 	
@@ -55,6 +61,10 @@ public class ExerciseAppProvider extends ContentProvider {
 	
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() , WR_EXERCISES);
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() + "/#", WR_EXERCISE_ID);
+	    
+	    //gets all Exercises of a specific Workout
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutPath() + "/#/" +  ExerciseAppManager.getExercisesPath(),  WR_ID_EXERCISES);
+
 	}
 	//need to think about uri for joining tables
 	
@@ -71,19 +81,22 @@ public class ExerciseAppProvider extends ContentProvider {
 	    	return Workouts.CONTENT_TYPE;
 	    case WORKOUT_ID:
 	        return Workouts.CONTENT_ITEM_TYPE;
+	    case WR_ID_EXERCISES:
+	    	return WRExercises.CONTENT_TYPE;
+	    	
 	    case EXERCISES:
 	    	return Exercises.CONTENT_TYPE;
 	    case EXERCISE_ID:
 	        return Exercises.CONTENT_ITEM_TYPE;
 	    case WR_EXERCISES:
-	    	return WRExercises.CONTENT_TYPE; //need to think about uri for joining tables
+	    	return WRExercises.CONTENT_TYPE; //need to think about uri for joining tables*/
 	    case WR_EXERCISE_ID:
 	        return WRExercises.CONTENT_ITEM_TYPE;
 	    default:
 	        throw new IllegalArgumentException("Unknown URI " + uri);
 	    }
 	}
-	
+
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		if (DEBUG) Log.v(TAG, "delete(uri=" + uri + ")");
@@ -109,25 +122,10 @@ public class ExerciseAppProvider extends ContentProvider {
 	                    selectionArgs);
 	        }
 	        break;
-	    case EXERCISES:
-	        rowsAffected = sqlDB.delete(ExerciseTable.TABLE_EXERCISE,
-	                selection, selectionArgs);
-	        break;
-	    case EXERCISE_ID:
-	        id = uri.getLastPathSegment();
-	        if (TextUtils.isEmpty(selection)) {
-	            rowsAffected = sqlDB.delete(ExerciseTable.TABLE_EXERCISE,
-	            		ExerciseTable.COLUMN_ID + "=" + id, null);
-	        } else {
-	            rowsAffected = sqlDB.delete(ExerciseTable.TABLE_EXERCISE,
-	                    selection + " and " + ExerciseTable.COLUMN_ID + "=" + id,
-	                    selectionArgs);
-	        }
-	        break;
-	    case WR_EXERCISES:
+	   /* case WR_EXERCISES:
 	        rowsAffected = sqlDB.delete(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE,
 	                selection, selectionArgs);
-	        break;
+	        break;*/
 	    case WR_EXERCISE_ID:
 	        id = uri.getLastPathSegment();
 	        if (TextUtils.isEmpty(selection)) {
@@ -174,16 +172,6 @@ public class ExerciseAppProvider extends ContentProvider {
 			throw new SQLException("Failed to insert row into " + uri);
         }
 	}
-	/*
-	public long createWorkout(String name, String description) {
-		ContentValues initialValues = new ContentValues();
-		initialValues.put(WorkoutRoutineTable.COLUMN_NAME, name);
-		initialValues.put(WorkoutRoutineTable.COLUMN_DESCRIPTION, description);
-
-		return mDb.insert(WorkoutRoutineTable.TABLE_WORKOUTROUTINE, null,
-				initialValues);
-	}*/
-
 	
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
@@ -205,6 +193,24 @@ public class ExerciseAppProvider extends ContentProvider {
 	    case WORKOUTS:
 		    qb.setTables(WorkoutRoutineTable.TABLE_WORKOUTROUTINE);
 	        break;
+	    case WR_EXERCISE_ID:
+	    	qb.setTables(ExerciseTable.TABLE_EXERCISE + ", " + WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE);
+	    	qb.appendWhere(WRExercisesColumns.COLUMN_EXERCISE_ID 
+	    			+ " = " + ExercisesColumns.COLUMN_ID 
+	    			+ " AND " + WRExercisesColumns.COLUMN_ID 
+	    			+ " = " + uri.getLastPathSegment());	
+	    	break;
+	    case WR_ID_EXERCISES:
+	    	qb.setTables(WorkoutRoutineTable.TABLE_WORKOUTROUTINE + ", " +  ExerciseTable.TABLE_EXERCISE + ", " +  WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE);
+	    	qb.appendWhere(WorkoutsColumns.COLUMN_ID
+	    			+ " = " + WRExercisesColumns.COLUMN_WORKOUT_ID 
+	    			+ " AND " +  WRExercisesColumns.COLUMN_EXERCISE_ID 
+	    			+ " = " + ExercisesColumns.COLUMN_ID 
+	    			+ " AND " + WRExercisesColumns.COLUMN_WORKOUT_ID 
+	    			+ " = " + uri.getPathSegments().get(1));
+	    	break;
+	    	//does it make a difference if search from workout table or wrexercise table?
+	    	
 	    case EXERCISE_ID:
 		    qb.setTables(ExerciseTable.TABLE_EXERCISE);
 	        qb.appendWhere(ExerciseTable.COLUMN_ID + "=" + uri.getLastPathSegment());
@@ -212,14 +218,14 @@ public class ExerciseAppProvider extends ContentProvider {
 	    case EXERCISES:
 		    qb.setTables(ExerciseTable.TABLE_EXERCISE);
 	        break;
-	    case WR_EXERCISE_ID:
+	   /* case WR_EXERCISE_ID:
 		    qb.setTables(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE);
 	        qb.appendWhere(WorkoutRoutineExerciseTable.COLUMN_ID + "=" + uri.getLastPathSegment());
 	        
 	        break;
 	    case WR_EXERCISES:
 		    qb.setTables(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE);
-	        break;
+	        break;*/
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");
 	    }

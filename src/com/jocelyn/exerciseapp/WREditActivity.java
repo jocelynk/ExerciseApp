@@ -221,7 +221,9 @@ public class WREditActivity extends SherlockFragmentActivity implements LoaderMa
 		//CursorLoader workout;
 		//switch(id) {
 		//case WR_EDIT:
-			CursorLoader workout = new CursorLoader(this, Workouts.buildWorkoutIdUri(""+mRowId), null, null, null, null);
+		String[] projection = { WorkoutRoutineTable.COLUMN_ID, WorkoutRoutineTable.COLUMN_NAME, WorkoutRoutineTable.COLUMN_DESCRIPTION };	 
+
+		CursorLoader workout = new CursorLoader(this, Workouts.buildWorkoutIdUri(""+mRowId), projection, null, null, null);
 		//case WR_CREATE:
 			//workout = new CursorLoader(this, ExerciseAppProvider.CONTENT_URI, null, null, null, null);
 		//default:

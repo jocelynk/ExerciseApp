@@ -34,7 +34,12 @@
         <activity
             android:name=".WRViewActivity"
             android:label="@string/workout_routine_view_title" />
-      
+        <activity
+            android:name=".RecordExerciseActivity"
+             />
+       <activity
+            android:name=".WRExerciseEditActivity"
+             />
     </application>
 
 </manifest>

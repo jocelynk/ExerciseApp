@@ -6,9 +6,11 @@
     <string name="no_workouts">You have no workouts.</string>
     <string name="menu_insert_workout">Add Workout</string>
     <string name="enter_workout">Enter Workout</string>
+    <string name="menu_home">Home</string>
     <string name="menu_view">View</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_delete">Delete</string>
+    <string name="menu_insert_exercise">Add Exercise</string>
     <string name="name">Name</string>
     <string name="description">Description</string>
     <string name="confirm">Confirm</string>
@@ -18,6 +20,10 @@
     <string name="workout_routine_view_title">View Workout</string>
     <string name="workout_exercise_add_title">Add Exercise</string>
     <string name="no_exercises">You have no exercises.</string>
+    <string name="select_exercise_category">1. Select Exercise Category.</string>
+    <string name="choose_exercise">2. Choose an Exercise.</string>
+    <string name="choose_category">Choose a Category.</string>
+    
     
 
 </resources>

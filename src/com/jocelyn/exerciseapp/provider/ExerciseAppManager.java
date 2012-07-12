@@ -31,13 +31,13 @@ public final class ExerciseAppManager {
 		return WR_EXERCISES_PATH;
 	}
 
-	interface WorkoutsColumns {
+	public interface WorkoutsColumns {
 		String COLUMN_ID = "WorkoutRoutines._id";
 		String NAME = "WorkoutRoutines.name";
 		String DESCRIPTION = "WorkoutRoutines.description";
 	}
 	
-	interface ExercisesColumns {
+	public interface ExercisesColumns {
 		
 		String COLUMN_ID = "Exercises._id";
 		String NAME = "Exercises.name";
@@ -45,7 +45,7 @@ public final class ExerciseAppManager {
 		String CATEGORY = "Exercises.category";
 	}
 	
-	interface WRExercisesColumns {
+	public interface WRExercisesColumns {
 		
 		String COLUMN_ID = "WorkoutRoutineExercises._id";
 		String COLUMN_WORKOUT_ID = "WorkoutRoutineExercises.workout_id";
@@ -68,6 +68,12 @@ public final class ExerciseAppManager {
 		
 		public static Uri buildWorkoutIdUri(String workoutId) {
             return CONTENT_URI.buildUpon().appendPath(workoutId).build();
+        }
+		
+		//build Uri for getting all exercises of a specific workout
+		//workouts/#/exercises
+		public static Uri buildWorkoutIdExerciseUri(String workoutId) {
+            return CONTENT_URI.buildUpon().appendPath(workoutId).appendPath(EXERCISES_PATH).build();
         }
 	}
 	

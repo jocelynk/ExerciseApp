@@ -22,6 +22,7 @@ public class ExerciseDB extends SQLiteOpenHelper {
 		AttributeTable.onCreate(database);
 		ExerciseAttributeTable.onCreate(database);
 		RecordTable.onCreate(database);
+		fillTestData(database);
 		
 	}
 	
@@ -37,5 +38,17 @@ public class ExerciseDB extends SQLiteOpenHelper {
 		RecordTable.onUpgrade(database, oldVersion, newVersion);
 	}
 	
+	private void fillTestData(SQLiteDatabase db) {
+		//fill with Exercises
+		/*1*/db.execSQL("insert into Exercises (name, description, category) values ('Running', 'bad for knees', 'Cardio')");
+		/*2*/db.execSQL("insert into Exercises (name, description, category) values ('Swimming', 'good for knees', 'Cardio')");
+		/*3*/db.execSQL("insert into Exercises (name, description, category) values ('Elliptical', 'good for knees', 'Cardio')");
+		/*4*/db.execSQL("insert into Exercises (name, description, category) values ('Bench Press', 'with weights', 'Strength Training')");
+		/*5*/db.execSQL("insert into Exercises (name, description, category) values ('Bicep Curls', 'with weights', 'Strength Training')");
+		/*6*//*1*/db.execSQL("insert into Exercises (name, description, category) values ('Tricep Extensions', 'with weights', 'Strength Training')");
+		/*7*/db.execSQL("insert into Exercises (name, description, category) values ('Jumping Jacks', 'bad for knees', 'Warmup')");
+		/*8*/db.execSQL("insert into Exercises (name, description, category) values ('Stretching', 'good for knees', 'Warmup')");
+		/*9*/db.execSQL("insert into Exercises (name, description, category) values ('Jump Rope', 'good for knees', 'Warmup')");
+	}
 
 }
