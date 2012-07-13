@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,7 +29,6 @@ import com.jocelyn.exerciseapp.provider.ExerciseAppManager.ExercisesColumns;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercises;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercisesColumns;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
-import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WorkoutsColumns;
 
 
 
@@ -66,13 +66,10 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 					.getLong(WorkoutRoutineTable.COLUMN_ID) : null;
 		}
 		
-		getSupportLoaderManager().initLoader(WR_VIEW, null, this);
-		/*getSupportLoaderManager().initLoader(EXERCISE_VIEW, null, this);
 		String[] uiBindFrom = { ExerciseTable.COLUMN_NAME };
 	    int[] uiBindTo = { R.id.text1 };
 		
-	    adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.exercises_row, null, uiBindFrom, uiBindTo,0);
-	    //which loader is it getting?
+	    adapter = new SimpleCursorAdapter(getApplicationContext(), R.layout.exercises_row, null, uiBindFrom, uiBindTo,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 	    
 	    final Intent i = new Intent(this, RecordExerciseActivity.class);		
 	    final ListView lv = (ListView) findViewById(android.R.id.list);
@@ -85,7 +82,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 
 		@Override
 	    public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
-				String[] projection = {ExercisesColumns.NAME, WRExercisesColumns.COLUMN_ID};
+				String[] projection = {ExercisesColumns.NAME, WRExercisesColumns.COLUMN_ID, WRExercisesColumns.COLUMN_EXERCISE_ID};
 			    Cursor exercise_id = getContentResolver().query(WRExercises.buildWRExerciseIdUri(""+id), projection, null, null, null);
 			    
 			    String name = "";
@@ -93,7 +90,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 			    if (exercise_id != null && exercise_id.moveToFirst()) {
 			    	 name = exercise_id.getString(exercise_id
 							.getColumnIndexOrThrow(ExerciseTable.COLUMN_NAME));
-
+			    	 
 					 e_id = exercise_id
 							.getLong(exercise_id
 									.getColumnIndexOrThrow(WorkoutRoutineExerciseTable.COLUMN_EXERCISE_ID));
@@ -107,16 +104,33 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 				startActivityForResult(i, ACTIVITY_VIEW);
 		    }
 		 });
-	    */
+		getSupportLoaderManager().initLoader(WR_VIEW, null, this);
+		getSupportLoaderManager().initLoader(EXERCISE_VIEW, null, this);
+	    
 		
 		// suggested by alex.
 		getSupportActionBar().setDisplayUseLogoEnabled(false);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
 		
-/*		registerForContextMenu(lv);
-*/	}
+		
+		registerForContextMenu(lv);
+	}
 	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (DEBUG)
+			Log.v(TAG, "+ ON PAUSE +");
+		// saveState();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.v(TAG, "+ ON RESUME +");
+		getSupportLoaderManager().restartLoader(EXERCISE_VIEW, null, this);
+	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -156,6 +170,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 		switch (item.getItemId()) {
 		case R.id.menu_delete:
 			getContentResolver().delete(WRExercises.buildWRExerciseIdUri(""+info.id), null, null);
+			getSupportLoaderManager().restartLoader(EXERCISE_VIEW, null, this);
 			//mDbAdapter.deleteExerciseFromWorkout(info.id);
 			//mDbAdapter.deleteRecordsByWRE(info.id);
 			return true;
@@ -201,42 +216,29 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 	
 	
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		//CursorLoader workout;
-		//switch(id) {
-		//case WR_EDIT:
-		//CursorLoader workout = new CursorLoader(this, Workouts.buildWorkoutIdUri(""+mRowId), null, null, null, null);
-		//case WR_CREATE:
-			//workout = new CursorLoader(this, ExerciseAppProvider.CONTENT_URI, null, null, null, null);
-		//default:
-			//workout = new CursorLoader(this, ExerciseAppProvider.CONTENT_URI, null, null, null, null);
-
-		//}		
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {		
 		CursorLoader cur;
-		
-		//switch(id) {
-		//case WR_VIEW:
+		Log.v(TAG, "id on onCreateLoader: " + id);
+		switch(id) {
+		case WR_VIEW:
 			String[] projection = { WorkoutRoutineTable.COLUMN_ID, WorkoutRoutineTable.COLUMN_NAME, WorkoutRoutineTable.COLUMN_DESCRIPTION };	 
 			cur = new CursorLoader(this, Workouts.buildWorkoutIdUri(""+mRowId), projection, null, null, null);
 			Log.d(TAG, "WRVIEW");
-		/*case EXERCISE_VIEW:
+		break;
+		default:
+			Log.d(TAG, "DEFAULT");
 			String[] columns = {ExercisesColumns.NAME, WRExercisesColumns.COLUMN_ID };			
 			cur = new CursorLoader(this, Workouts.buildWorkoutIdExerciseUri(""+mRowId), columns, null, null, null);
-			Log.d(TAG, "EXERCISE_VIEW");
-			Log.d(TAG, Workouts.buildWorkoutIdExerciseUri(""+mRowId) + "");*/
-			//CursorLoader workout = new CursorLoader(this, Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), null, null, null, null);
-		/*default:
-			Log.d(TAG, "DEFAULT");
-			String[] columns2 = {ExercisesColumns.NAME, WRExercisesColumns.COLUMN_ID };			
-			cur = new CursorLoader(this, Workouts.buildWorkoutIdExerciseUri(""+mRowId), columns2, null, null, null);*/
-		//}
+		
+		break;
+		}
 	    return cur;
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		int id = loader.getId();
-		
+		Log.v(TAG, "loader id = " +id);
 		switch(id) {
 		case WR_VIEW: 
 		if (cursor != null && cursor.moveToFirst()) {
@@ -244,16 +246,22 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 					.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_NAME)));
 			mDescriptionText.setText(cursor.getString(cursor.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_DESCRIPTION)));
 			Log.d(TAG, mNameText.getText()+"");
+			Log.d(TAG, mDescriptionText.getText()+"");
 			// suggested by alex
 			getSupportActionBar().setTitle(mNameText.getText());
 			if (!TextUtils.isEmpty(mDescriptionText.getText())) {
 				getSupportActionBar().setSubtitle(mDescriptionText.getText());
 			}
-			cursor.close();	
+				
 		}
-		//case EXERCISE_VIEW:
+		cursor.close();
+		break;
+		//Log.v(TAG, "loader id in WR_VIEW = " +id);
+		default:
 		//	Log.d(TAG, "swapCursor");
-			//adapter.swapCursor(cursor);
+		//	Log.v(TAG, "loader id in Exercise_VIEW = " +id);
+			adapter.swapCursor(cursor);
+			break;
 		}
 	}
 
@@ -264,8 +272,8 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 		switch(id) {
 		case WR_VIEW: 
 			break;
-		case EXERCISE_VIEW:
-			//adapter.swapCursor(null);
+		default:
+			adapter.swapCursor(null);
 			break;
 		}
 	}

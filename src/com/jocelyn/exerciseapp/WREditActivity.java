@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 public class WREditActivity extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>  {
 	
-	private static final String TAG = "WorkoutRoutineEdit";
+	private static final String TAG = "WREditActivity";
 	private static final boolean DEBUG = true;
 	private static final int WR_EDIT = 0;
 	private static final int WR_CREATE = 1;
@@ -154,24 +154,6 @@ public class WREditActivity extends SherlockFragmentActivity implements LoaderMa
 		Log.v(TAG, "+ ON RESUME +");
 		//populateFields();
 	}
-
-	/*private void populateFields() {
-		if (mRowId != null) {
-			//query from provider here
-			
-			//Cursor workout = mDbAdapter.fetchWorkout(mRowId);
-			//startManagingCursor(workout);
-			
-			Cursor workout = getContentResolver().query(Uri.withAppendedPath(ExerciseAppProvider.CONTENT_URI, String.valueOf(mRowId)), null, null, null, null);
-				
-			if (workout != null && workout.moveToFirst()) {
-				mNameText.setText(workout.getString(workout
-						.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_NAME)));
-				mDescriptionText.setText(workout.getString(workout.getColumnIndexOrThrow(WorkoutRoutineTable.COLUMN_DESCRIPTION)));
-				workout.close();
-			}	
-		}	
-	}*/
 
 	private void saveState() {
 		String name = mNameText.getText().toString();

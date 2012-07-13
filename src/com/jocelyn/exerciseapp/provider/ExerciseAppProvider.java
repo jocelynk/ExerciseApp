@@ -50,6 +50,8 @@ public class ExerciseAppProvider extends ContentProvider {
 	
 
 	private static final boolean DEBUG = true;
+
+	private static final int DISTINCT_EXERCISE = 500;
 	
 	static {
 		sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -58,6 +60,10 @@ public class ExerciseAppProvider extends ContentProvider {
 	    
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getExercisesPath() , EXERCISES);
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getExercisesPath() + "/#", EXERCISE_ID);
+	    
+	    //select distinct exercises
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getExercisesPath() + "/distinct",  DISTINCT_EXERCISE);
+	    
 	
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() , WR_EXERCISES);
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() + "/#", WR_EXERCISE_ID);
@@ -183,7 +189,9 @@ public class ExerciseAppProvider extends ContentProvider {
 		
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 	    qb.setTables(WorkoutRoutineTable.TABLE_WORKOUTROUTINE);
-	 
+	    String groupBy = null;
+	    boolean useDistinct = false;
+
 	    int uriType = sURIMatcher.match(uri);
 	    switch (uriType) {
 	    case WORKOUT_ID:
@@ -218,6 +226,11 @@ public class ExerciseAppProvider extends ContentProvider {
 	    case EXERCISES:
 		    qb.setTables(ExerciseTable.TABLE_EXERCISE);
 	        break;
+	    case DISTINCT_EXERCISE:
+	    	useDistinct = true;
+	    	groupBy = ExerciseTable.COLUMN_CATEGORY;
+	    	qb.setTables(ExerciseTable.TABLE_EXERCISE);
+	    	break;
 	   /* case WR_EXERCISE_ID:
 		    qb.setTables(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE);
 	        qb.appendWhere(WorkoutRoutineExerciseTable.COLUMN_ID + "=" + uri.getLastPathSegment());
@@ -229,10 +242,12 @@ public class ExerciseAppProvider extends ContentProvider {
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");
 	    }
-	 
+	    Log.v(TAG, "asdf" + useDistinct);
+	    qb.setDistinct(useDistinct);
 	    Cursor cursor = qb.query(mDB.getReadableDatabase(),
-	            projection, selection, selectionArgs, null, null, sortOrder);
-	    cursor.setNotificationUri(getContext().getContentResolver(), uri);
+	            projection, selection, selectionArgs, groupBy, null, sortOrder);
+	    if (cursor != null)
+	    	cursor.setNotificationUri(getContext().getContentResolver(), uri);
 	    return cursor;
 	}
 	

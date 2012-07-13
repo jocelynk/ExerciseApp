@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -27,7 +28,7 @@ import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercises;
 
 //change to user loaders
 public class WRExerciseEditActivity extends SherlockActivity {
-	private static final String TAG = "WorkoutExerciseEdit";
+	private static final String TAG = "WRExerciseEditActivity";
 	private static final boolean DEBUG = true;
 	
 	private Long wRowId;
@@ -104,8 +105,9 @@ public class WRExerciseEditActivity extends SherlockActivity {
 
 	private void fillSpinnerCategory() {
 
+		Log.v(TAG, Uri.withAppendedPath(Exercises.CONTENT_URI, "distinct")+"");
 		String[] projection = {ExerciseTable.COLUMN_ID, ExerciseTable.COLUMN_CATEGORY};
-		CursorLoader c = new CursorLoader(this, Exercises.CONTENT_URI, projection, null, null, ExerciseTable.COLUMN_CATEGORY );
+		CursorLoader c = new CursorLoader(this, Uri.withAppendedPath(Exercises.CONTENT_URI, "distinct"), projection, null, null, ExerciseTable.COLUMN_CATEGORY );
 		//need groupby
 		Cursor cur = c.loadInBackground();
 		if(cur!= null)
@@ -123,7 +125,7 @@ public class WRExerciseEditActivity extends SherlockActivity {
 		Spinner s = (Spinner) findViewById(R.id.spinner1);
 		s.setAdapter(adapter);
 		s.setOnItemSelectedListener(new MyOnItemSelectedListener());
-		//cur.close();
+		cur.close();
 	}
 	
 	private void fillSpinnerExercise(String category) {
@@ -142,7 +144,7 @@ public class WRExerciseEditActivity extends SherlockActivity {
 		Spinner s = (Spinner) findViewById(R.id.spinner2);
 		s.setAdapter(adapter);
 		s.setOnItemSelectedListener(new MyOnItemSelectedListener());
-		//cur.close();
+		cur.close();
 	}
 
 	public class MyOnItemSelectedListener implements OnItemSelectedListener {
