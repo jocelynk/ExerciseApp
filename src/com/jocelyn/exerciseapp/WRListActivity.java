@@ -19,6 +19,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercises;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
 
 
@@ -131,7 +132,7 @@ public class WRListActivity extends SherlockFragmentActivity implements LoaderMa
 		switch (item.getItemId()) {
 		case R.id.menu_delete:
 			getContentResolver().delete(Workouts.buildWorkoutIdUri(""+info.id), null, null);
-			
+			getContentResolver().delete(WRExercises.buildWREWorkoutIdUri(""+info.id), null, null); //TEST LATER
 			//mDbAdapter.deleteRecordByWR(info.id);
 			//mDbAdapter.deleteWorkoutExercise(info.id);
 			//mDbAdapter.deleteWorkout(info.id);

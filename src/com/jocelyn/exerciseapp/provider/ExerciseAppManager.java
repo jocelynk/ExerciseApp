@@ -8,7 +8,7 @@ public final class ExerciseAppManager {
 	
 	private static final String AUTHORITY = "com.jocelyn.exerciseapp.provider";
 	private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
-	private static final String WORKOUT_PATH = "workouts";
+	private static final String WORKOUTS_PATH = "workouts";
 	private static final String EXERCISES_PATH = "exercises";
 	private static final String WR_EXERCISES_PATH = "wr_exercises";
 	
@@ -19,8 +19,8 @@ public final class ExerciseAppManager {
 		return AUTHORITY;
 	}
 
-	public static String getWorkoutPath() {
-		return WORKOUT_PATH;
+	public static String getWorkoutsPath() {
+		return WORKOUTS_PATH;
 	}
 
 	public static String getExercisesPath() {
@@ -64,7 +64,7 @@ public final class ExerciseAppManager {
 		public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
         + "/workout_routine";
 		
-		public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(getWorkoutPath()).build();
+		public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(getWorkoutsPath()).build();
 		
 		public static Uri buildWorkoutIdUri(String workoutId) {
             return CONTENT_URI.buildUpon().appendPath(workoutId).build();
@@ -110,6 +110,10 @@ public static final class WRExercises implements BaseColumns, WRExercisesColumns
 		
 		public static Uri buildWRExerciseIdUri(String wrExerciseId) {
             return CONTENT_URI.buildUpon().appendPath(wrExerciseId).build();
+        }
+		
+		public static Uri buildWREWorkoutIdUri(String workoutId) {
+            return CONTENT_URI.buildUpon().appendPath(WORKOUTS_PATH).appendPath(workoutId).build();
         }
 	}
     

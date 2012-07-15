@@ -48,6 +48,9 @@ public class ExerciseAppProvider extends ContentProvider {
 	//Workout with Exercises
 	public static final int WR_ID_EXERCISES = 400;
 	
+	//WRE with Workout ID
+	public static final int WRE_WORKOUT_ID = 500;
+	
 
 	private static final boolean DEBUG = true;
 
@@ -55,21 +58,26 @@ public class ExerciseAppProvider extends ContentProvider {
 	
 	static {
 		sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+		//Workouts
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutPath() , WORKOUTS);
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutPath() + "/#", WORKOUT_ID);
+	    //gets all Exercises of a specific Workout
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutPath() + "/#/" +  ExerciseAppManager.getExercisesPath(),  WR_ID_EXERCISES);
 	    
+	    //Exercises
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getExercisesPath() , EXERCISES);
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getExercisesPath() + "/#", EXERCISE_ID);
-	    
 	    //select distinct exercises
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getExercisesPath() + "/distinct",  DISTINCT_EXERCISE);
 	    
-	
+	    //WRE
+	    //gets all WRE of a specific Workout
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() + "/" +  ExerciseAppManager.getWorkoutPath() + "/#",  WRE_WORKOUT_ID);
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() , WR_EXERCISES);
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() + "/#", WR_EXERCISE_ID);
 	    
-	    //gets all Exercises of a specific Workout
-	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutPath() + "/#/" +  ExerciseAppManager.getExercisesPath(),  WR_ID_EXERCISES);
+	  
+	   
 
 	}
 	//need to think about uri for joining tables
@@ -143,6 +151,17 @@ public class ExerciseAppProvider extends ContentProvider {
 	                    selectionArgs);
 	        }
 	        break;
+	    case WRE_WORKOUT_ID:
+	    	id = uri.getLastPathSegment();
+	    	 if (TextUtils.isEmpty(selection)) {
+		            rowsAffected = sqlDB.delete(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE,
+		            		WorkoutRoutineExerciseTable.COLUMN_WORKOUT_ID + "=" + id, null);
+		        } else {
+		            rowsAffected = sqlDB.delete(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE,
+		                    selection + " and " + WorkoutRoutineExerciseTable.COLUMN_WORKOUT_ID + "=" + id,
+		                    selectionArgs);
+		        }
+		        break;
 	    default:
 	        throw new IllegalArgumentException("Unknown or Invalid URI " + uri);
 	    }
