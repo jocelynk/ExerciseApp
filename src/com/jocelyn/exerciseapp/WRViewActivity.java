@@ -122,7 +122,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 		super.onPause();
 		if (DEBUG)
 			Log.v(TAG, "+ ON PAUSE +");
-		// saveState();
+		getSupportLoaderManager().restartLoader(EXERCISE_VIEW, null, this);
 	}
 
 	@Override
@@ -169,9 +169,9 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 
 		switch (item.getItemId()) {
 		case R.id.menu_delete:
+			//mDbAdapter.deleteExerciseFromWorkout(info.id);
 			getContentResolver().delete(WRExercises.buildWRExerciseIdUri(""+info.id), null, null);
 			getSupportLoaderManager().restartLoader(EXERCISE_VIEW, null, this);
-			//mDbAdapter.deleteExerciseFromWorkout(info.id);
 			//mDbAdapter.deleteRecordsByWRE(info.id);
 			return true;
 		}
@@ -254,7 +254,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 			}
 				
 		}
-		cursor.close();
+		//cursor.close();
 		break;
 		//Log.v(TAG, "loader id in WR_VIEW = " +id);
 		default:
