@@ -14,13 +14,19 @@
             android:id="@+id/list_view_tab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tab1" />
+            android:text="List" />
 
         <Button
             android:id="@+id/search_view_tab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tab2" />
+            android:text="Search" />
+        
+        <Button
+            android:id="@+id/randomize_view_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Randomize" />
     </LinearLayout>
 
     <View

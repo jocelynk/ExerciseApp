@@ -16,7 +16,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 public class ExerciseTabFragment extends SherlockFragment {
 	private static final int LIST_STATE = 0x1;
     private static final int SEARCH_STATE = 0x2;
-    private static final int RANDOM_STATE = 0x2;
+    private static final int RANDOM_STATE = 0x3;
     
     private int mTabState;
     
@@ -28,7 +28,8 @@ public class ExerciseTabFragment extends SherlockFragment {
         // buttons for the tab widgets. These are bad tab widgets, design something better, this is just
         // to keep the code simple.
         Button listViewTab = (Button) view.findViewById(R.id.list_view_tab);
-        Button gridViewTab = (Button) view.findViewById(R.id.search_view_tab);
+        Button searchViewTab = (Button) view.findViewById(R.id.search_view_tab);
+        Button randomizeViewTab = (Button) view.findViewById(R.id.randomize_view_tab);
         
         listViewTab.setOnClickListener(new OnClickListener() {
             @Override
@@ -39,11 +40,20 @@ public class ExerciseTabFragment extends SherlockFragment {
 
         });
         
-        gridViewTab.setOnClickListener(new OnClickListener() {
+        searchViewTab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Switch the tab content to display the grid view.
                 gotoSearchView();
+            }
+
+        });
+        
+        randomizeViewTab.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Switch the tab content to display the grid view.
+                gotoRandomizeView();
             }
 
         });
@@ -90,6 +100,25 @@ public class ExerciseTabFragment extends SherlockFragment {
             if (fm != null) {
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.fragment_content, new ExerciseSearchTab());
+                ft.commit();
+            }
+        }
+    }
+    
+    public void gotoRandomizeView() {
+        // See gotoListView(). This method does the same thing except it loads
+        // the grid tab.
+        
+        if (mTabState != RANDOM_STATE) {
+            mTabState = RANDOM_STATE;
+            
+            FragmentManager fm = getFragmentManager();
+            
+            ExerciseRandomTab currentTab = new ExerciseRandomTab();
+            currentTab.setArguments(getActivity().getIntent().getExtras());
+            if (fm != null) {
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.fragment_content, currentTab);
                 ft.commit();
             }
         }

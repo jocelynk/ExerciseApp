@@ -99,7 +99,7 @@ public class ExerciseListTab extends SherlockFragment implements LoaderManager.L
 		// suggested by alex.
 		
 	}
-	
+	//NEED TO GET CANCEL BUTTON WORKING
 	/*@Override
 	protected DialogFragment onCreateDialog(int id) {
 		switch (id) {

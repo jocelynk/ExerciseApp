@@ -59,10 +59,10 @@ public class ExerciseAppProvider extends ContentProvider {
 	static {
 		sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		//Workouts
-	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutPath() , WORKOUTS);
-	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutPath() + "/#", WORKOUT_ID);
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutsPath() , WORKOUTS);
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutsPath() + "/#", WORKOUT_ID);
 	    //gets all Exercises of a specific Workout
-	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutPath() + "/#/" +  ExerciseAppManager.getExercisesPath(),  WR_ID_EXERCISES);
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutsPath() + "/#/" +  ExerciseAppManager.getExercisesPath(),  WR_ID_EXERCISES);
 	    
 	    //Exercises
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getExercisesPath() , EXERCISES);
@@ -72,7 +72,7 @@ public class ExerciseAppProvider extends ContentProvider {
 	    
 	    //WRE
 	    //gets all WRE of a specific Workout
-	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() + "/" +  ExerciseAppManager.getWorkoutPath() + "/#",  WRE_WORKOUT_ID);
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() + "/" +  ExerciseAppManager.getWorkoutsPath() + "/#",  WRE_WORKOUT_ID);
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() , WR_EXERCISES);
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() + "/#", WR_EXERCISE_ID);
 	    
