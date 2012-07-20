@@ -1,6 +1,7 @@
 package com.jocelyn.exerciseapp;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
@@ -19,143 +20,191 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.jocelyn.exerciseapp.data.WorkoutRoutineExerciseTable;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercises;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
 
+//check previous list to see if exercises already on list? or can ppl add exercise twice?
 public class ExerciseRandomTab extends SherlockFragment {
 	public static final String TAG = "ExerciseRandomTab";
 	public static final boolean DEBUG = true;
-	
+
 	private Button randomizeButton;
 	private Button cancelButton;
-	
+
 	private EditText q1;
 	private EditText c1;
 	private EditText c2;
 	private EditText c3;
-	
+
 	private Long wRowId;
 	private boolean saved = false;
 
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.randomize_form, container, false);
-		
+
 		randomizeButton = (Button) view.findViewById(R.id.randomize);
 		cancelButton = (Button) view.findViewById(R.id.cancel);
-		q1 = (EditText) view.findViewById(R.id.v1);
-		c1 = (EditText) view.findViewById(R.id.v2);
-		c2 = (EditText) view.findViewById(R.id.v3);
-		c3 = (EditText) view.findViewById(R.id.v4);
-		
+		c1 = (EditText) view.findViewById(R.id.v1);
+		c2 = (EditText) view.findViewById(R.id.v2);
+		c3 = (EditText) view.findViewById(R.id.v3);
+
 		randomizeButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View view) {
-				saveState();
-				
+				saved = saveState();
+				if (saved) {
+					getActivity().setResult(FragmentActivity.RESULT_OK);
+					getActivity().finish();
+				}
+
 			}
 		});
-		
+
 		return view;
 	}
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.add_exercise_to_workout);
+		// setContentView(R.layout.add_exercise_to_workout);
 
-		if (DEBUG) Log.v(TAG, "+++ ON CREATE +++");
-	
+		if (DEBUG)
+			Log.v(TAG, "+++ ON CREATE +++");
+
 		Bundle bundle;
-	    if(savedInstanceState != null)  bundle = savedInstanceState; // 1       
-	    else if(getArguments() != null) bundle = getArguments();     // 2
-	    else                            bundle = getActivity().getIntent().getExtras();
+		if (savedInstanceState != null)
+			bundle = savedInstanceState; // 1
+		else if (getArguments() != null)
+			bundle = getArguments(); // 2
+		else
+			bundle = getActivity().getIntent().getExtras();
 
-		wRowId = (bundle == null) ? null
-				: (Long) bundle
-						.getSerializable(WorkoutRoutineTable.COLUMN_ID);
+		wRowId = (bundle == null) ? null : (Long) bundle
+				.getSerializable(WorkoutRoutineTable.COLUMN_ID);
 		if (wRowId == null) {
 			wRowId = bundle != null ? bundle
 					.getLong(WorkoutRoutineTable.COLUMN_ID) : null;
 		}
 
 		// suggested by alex.
-		
-	}
-	
-	private void saveState() {
-		int value1 = Integer.parseInt(q1.getText().toString());
-		int value2 = Integer.parseInt(c1.getText().toString());
-		int value3 = Integer.parseInt(c2.getText().toString());
-		int value4 = Integer.parseInt(c3.getText().toString());
 
-		//Long[] random_ids = new Long[value1];
-		List<Long> random_ids = new ArrayList<Long>();
-		Random rand = new Random();
-		int random_id = -1;
-		
-		int sum_category_values = value2+value3+value4;
-		if(value1 > 0){
-			if(value1 == sum_category_values) {
-				for(int i = 0; i<value2; i++) {
-					random_id = rand.nextInt(3 - 1 + 1) + 1;
-					random_ids.add(Long.parseLong(random_id + ""));
-				}
-				for(int i = 0; i<value3; i++) {
-					random_id = rand.nextInt(6 - 4 + 1) + 4;
-					random_ids.add(Long.parseLong(random_id + ""));
-				}
-				for(int i = 0; i<value4; i++) {
-					random_id = rand.nextInt(9 - 7 + 1) + 7;
-					random_ids.add(Long.parseLong(random_id + ""));
-				}
-			}
-			
-		}
-		String test = "";
-		ListIterator<Long> list =  random_ids.listIterator();
-		if(!random_ids.isEmpty()) {
-			while(list.hasNext()) {
-				test += list.next().toString();
-			}
-		}
-		Log.d(TAG, "list of ids: " + test);
-		
-		
+	}
+
+	private boolean saveState() {
+
 		Context context = getActivity().getApplicationContext();
-		CharSequence text = "Your Exercises have been saved.";
+		CharSequence text;
 		int duration = Toast.LENGTH_SHORT;
 
-		Toast toast = Toast.makeText(context, text, duration);
+		Toast toast;
 
-		/*if (wRowId == null) {
-			if (!TextUtils.isEmpty(name)) {
-				ContentValues values = new ContentValues();
-				values.put(WorkoutRoutineTable.COLUMN_NAME, name);
-				values.put(WorkoutRoutineTable.COLUMN_DESCRIPTION, description);
-		        getContentResolver().insert(Workouts.CONTENT_URI, values);
-				//long id = mDbAdapter.createWorkout(name, description);
-				if (id > 0) {
-					mRowId = id;
+		String input1 = c1.getText().toString();
+		String input2 = c2.getText().toString();
+		String input3 = c3.getText().toString();
+
+		if (TextUtils.isEmpty(input1)) {
+			input1 = "0";
+		}
+		if (TextUtils.isEmpty(input2)) {
+			input2 = "0";
+		}
+		if (TextUtils.isEmpty(input3)) {
+			input3 = "0";
+		}
+		int value1 = Integer.parseInt(input1);
+		int value2 = Integer.parseInt(input2);
+		int value3 = Integer.parseInt(input3);
+
+		if (value1 > 3 || value2 > 3 || value3 > 3) {
+			text = "You have entered more exercises than we have.";
+			toast = Toast.makeText(context, text, duration);
+			toast.show();
+			return false;
+		} else if (value1 + value2 + value3 <= 0) {
+			text = "Please enter more than zero exercises.";
+			toast = Toast.makeText(context, text, duration);
+			toast.show();
+			return false;
+		} else {
+			// Long[] random_ids = new Long[value1];
+			Random rand = new Random();
+			List<Long> random_ids = new ArrayList<Long>();
+			// Cardio List
+			List<Long> cardio = new ArrayList<Long>();
+			// Strength Training List
+			List<Long> st = new ArrayList<Long>();
+			// Warmup list
+			List<Long> warmup = new ArrayList<Long>();
+			for (int i = 1; i <= 9; i++) {
+				if (i <= 3) {
+					cardio.add(Long.parseLong(i + ""));
+				} else if (i <= 6) {
+					st.add(Long.parseLong(i + ""));
+				} else {
+					warmup.add(Long.parseLong(i + ""));
 				}
-		        saved = true;
-		        toast.show();
 			}
-		} else  {
-			if (!TextUtils.isEmpty(name)) {
-								
-				ContentValues values = new ContentValues();
-				values.put(WorkoutRoutineTable.COLUMN_NAME, name);
-				values.put(WorkoutRoutineTable.COLUMN_DESCRIPTION, description);
-				//String selection = WorkoutRoutineTable.COLUMN_ID + " = ";
-				//String[] selectionArgs = new String[] { String.valueOf(mRowId) };
-				getContentResolver().update(Workouts.buildWorkoutIdUri(""+mRowId), values, null, null);
-				saved = true;
-				toast.show();
-			}
-			
 
-		}*/
+			Collections.shuffle(cardio, rand);
+			Collections.shuffle(st, rand);
+			Collections.shuffle(warmup, rand);
+
+			for (int i = 0; i < value1; i++) {
+				random_ids.add(warmup.get(i));
+			}
+			for (int i = 0; i < value2; i++) {
+				random_ids.add(st.get(i));
+			}
+			for (int i = 0; i < value3; i++) {
+				random_ids.add(cardio.get(i));
+			}
+			Collections.sort(random_ids);
+			Collections.reverse(random_ids);
+
+			ListIterator<Long> list = random_ids.listIterator();
+			while (list.hasNext()) {
+
+				ContentValues values = new ContentValues();
+				values.put(WorkoutRoutineExerciseTable.COLUMN_WORKOUT_ID,
+						wRowId);
+				values.put(WorkoutRoutineExerciseTable.COLUMN_EXERCISE_ID,
+						list.next());
+				getActivity().getContentResolver().insert(
+						WRExercises.CONTENT_URI, values);
+
+			}
+			text = "Your Exercises have been saved.";
+			toast = Toast.makeText(context, text, duration);
+
+			toast.show();
+			return true;
+		}
+
+		/*
+		 * if (wRowId == null) { if (!TextUtils.isEmpty(name)) { ContentValues
+		 * values = new ContentValues();
+		 * values.put(WorkoutRoutineTable.COLUMN_NAME, name);
+		 * values.put(WorkoutRoutineTable.COLUMN_DESCRIPTION, description);
+		 * getContentResolver().insert(Workouts.CONTENT_URI, values); //long id
+		 * = mDbAdapter.createWorkout(name, description); if (id > 0) { mRowId =
+		 * id; } saved = true; toast.show(); } } else { if
+		 * (!TextUtils.isEmpty(name)) {
+		 * 
+		 * ContentValues values = new ContentValues();
+		 * values.put(WorkoutRoutineTable.COLUMN_NAME, name);
+		 * values.put(WorkoutRoutineTable.COLUMN_DESCRIPTION, description);
+		 * //String selection = WorkoutRoutineTable.COLUMN_ID + " = ";
+		 * //String[] selectionArgs = new String[] { String.valueOf(mRowId) };
+		 * getContentResolver().update(Workouts.buildWorkoutIdUri(""+mRowId),
+		 * values, null, null); saved = true; toast.show(); }
+		 * 
+		 * 
+		 * }
+		 */
 
 	}
 }

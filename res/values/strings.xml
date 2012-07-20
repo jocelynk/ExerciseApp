@@ -24,13 +24,12 @@
     <string name="select_exercise_category">1. Select Exercise Category.</string>
     <string name="choose_exercise">2. Choose an Exercise.</string>
     <string name="choose_category">Choose a Category.</string>
-    <string name="q1">1. Total exercises?</string>
-    <string name="v1">9</string>
-    <string name="q2">2. Exercises in each category?</string>
+    <string name="q1">How many exercises in each category?</string>
+    <string name="v1">3</string>
     <string name="c1">Warm Up</string>
-    <string name="v2">3</string>
     <string name="c2">Strength Training</string>
     <string name="c3">Cardio</string>
+    <string name="num_exercises">/3</string>
     
     
 

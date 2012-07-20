@@ -153,7 +153,6 @@ public class ExerciseListTab extends SherlockFragment implements LoaderManager.L
 			getLoaderManager().restartLoader(EXERCISE, arg, this);
 		else
 			getLoaderManager().initLoader(EXERCISE, arg, this);
-		Log.v(TAG, "aosijnfgapoiwejnhgfa[poiwejf " + this);
 		String[] from = new String[] { ExerciseTable.COLUMN_NAME };
 		int[] to = new int[] { android.R.id.text1 };
 		adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, null, from, to, 0);

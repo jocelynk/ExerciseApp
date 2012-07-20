@@ -8,39 +8,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/q1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/q1"
-                android:textSize="20sp" />
-            <!-- android:layout_marginLeft="15dp" -->
-            <!-- android:layout_marginTop="15dp" -->
-
-            <EditText
-                android:id="@+id/v1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:hint="@string/v1"
-                android:inputType="number"
-                android:maxLength="3" />
-        </LinearLayout>
-
         <TextView
-            android:id="@+id/q2"
+            android:id="@+id/q1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="15dp"
-            android:text="@string/q2"
+            android:text="@string/q1"
             android:textSize="20sp" />
 
         <LinearLayout
@@ -54,18 +28,22 @@
                 android:id="@+id/c1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="21dp"
                 android:text="@string/c1"
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/v2"
+                android:id="@+id/v1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:hint="@string/v2"
+                android:hint="@string/v1"
                 android:inputType="numberDecimal"
                 android:maxLength="3" />
+             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/num_exercises"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -78,18 +56,22 @@
                 android:id="@+id/c2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="21dp"
                 android:text="@string/c2"
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/v3"
+                android:id="@+id/v2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:hint="@string/v2"
+                android:hint="@string/v1"
                 android:inputType="numberDecimal"
                 android:maxLength="3" />
+             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/num_exercises"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -102,18 +84,24 @@
                 android:id="@+id/c3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="21dp"
                 android:text="@string/c3"
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/v4"
+                android:id="@+id/v3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:hint="@string/v2"
+                android:hint="@string/v1"
                 android:inputType="numberDecimal"
                 android:maxLength="3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/num_exercises"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
