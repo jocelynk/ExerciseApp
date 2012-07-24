@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,6 +41,8 @@ public class ExerciseRandomTab extends SherlockFragment {
 	private EditText c2;
 	private EditText c3;
 
+	AlertDialog alert = null;
+
 	private Long wRowId;
 	private boolean saved = false;
 
@@ -61,6 +66,14 @@ public class ExerciseRandomTab extends SherlockFragment {
 					getActivity().finish();
 				}
 
+			}
+		});
+
+		cancelButton.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View view) {
+
+				alert.show();
 			}
 		});
 
@@ -90,7 +103,21 @@ public class ExerciseRandomTab extends SherlockFragment {
 					.getLong(WorkoutRoutineTable.COLUMN_ID) : null;
 		}
 
-		// suggested by alex.
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setMessage("Are you sure you want cancel?")
+				.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								getActivity().finish();
+							}
+						})
+				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+
+		alert = builder.create();
 
 	}
 

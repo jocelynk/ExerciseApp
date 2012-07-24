@@ -30,6 +30,8 @@
     <string name="c2">Strength Training</string>
     <string name="c3">Cardio</string>
     <string name="num_exercises">/3</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     
     
 

@@ -30,7 +30,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
-
+//FIX SPINNER ORIENTATION CHANGE LATER
 public class ExerciseListTab extends SherlockFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 	private static final String TAG = "WRExerciseEditActivity";
 	private static final boolean DEBUG = true;
@@ -46,6 +46,9 @@ public class ExerciseListTab extends SherlockFragment implements LoaderManager.L
 	private Button cancelButton;
 	private Spinner s1;
 	private Spinner s2;
+	
+	AlertDialog alert = null;
+
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,8 +71,10 @@ public class ExerciseListTab extends SherlockFragment implements LoaderManager.L
 		});
 		
 		cancelButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				getActivity().showDialog(CANCEL_DIALOG_ID);
+
+			public void onClick(View view) {
+
+				alert.show();
 			}
 		});
 		return view;
@@ -95,40 +100,38 @@ public class ExerciseListTab extends SherlockFragment implements LoaderManager.L
 			wRowId = bundle != null ? bundle
 					.getLong(WorkoutRoutineTable.COLUMN_ID) : null;
 		}
+		
+		 if (savedInstanceState != null) {
+	            // Restore last state for checked position.
+			 Log.d(TAG, "savedinstance does not equal null " + savedInstanceState.getInt("s1Pos"));
+			 
+			 Log.d(TAG, "savedinstance does not equal null " + savedInstanceState.getInt("s2Pos"));
+	           s1.setSelection(savedInstanceState.getInt("s1Pos"));
+	           s2.setSelection(savedInstanceState.getInt("s2Pos"));
+	        }
 
-		// suggested by alex.
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setMessage("Are you sure you want cancel?")
+				.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								getActivity().finish();
+							}
+						})
+				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+
+		alert = builder.create();
 		
 	}
-	//NEED TO GET CANCEL BUTTON WORKING
-	/*@Override
-	protected DialogFragment onCreateDialog(int id) {
-		switch (id) {
-		case CANCEL_DIALOG_ID:
-			return new AlertDialog.Builder(this)
-					.setMessage("Are you sure you want to cancel?")
-					.setPositiveButton("YES",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									finish();
-								}
-							})
-					.setNegativeButton("NO",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-								}
-							}).create();
-
-		}
-		return null;
-
-	}*/
 
 	private void fillSpinnerCategory() {
-		if(getLoaderManager().getLoader(CATEGORY) != null)
-			getLoaderManager().restartLoader(CATEGORY, null, this);
-		else
+		//if(getLoaderManager().getLoader(CATEGORY) != null)
+		//	getLoaderManager().restartLoader(CATEGORY, null, this);
+		//else
 			getLoaderManager().initLoader(CATEGORY, null, this);
 		// create an array to specify which fields we want to display
 		String[] from = new String[] { ExerciseTable.COLUMN_CATEGORY };
@@ -186,20 +189,25 @@ public class ExerciseListTab extends SherlockFragment implements LoaderManager.L
 		super.onSaveInstanceState(outState);
 		if (DEBUG) Log.v(TAG, "ON SAVED INSTANCE STATE");
 		outState.putSerializable(WorkoutRoutineTable.COLUMN_ID, wRowId);
+		
+		outState.putInt("s1Pos", s1.getSelectedItemPosition());
+		outState.putInt("s2Pos", s2.getSelectedItemPosition());
 	}
 
+	
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (DEBUG) Log.v(TAG, "+ ON PAUSE +");
-		fillSpinnerCategory();
+		if (DEBUG) Log.v(TAG, "++ ON PAUSE ++");
+		
+		//fillSpinnerCategory();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(DEBUG) Log.v(TAG, "+ ON RESUME +");
-		fillSpinnerCategory();
+		if(DEBUG) Log.v(TAG, "++ ON RESUME ++");
+		//fillSpinnerCategory();
 	}
 
 	private void save() {

@@ -122,14 +122,14 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 		super.onPause();
 		if (DEBUG)
 			Log.v(TAG, "+ ON PAUSE +");
-		getSupportLoaderManager().restartLoader(EXERCISE_VIEW, null, this);
+		//getSupportLoaderManager().restartLoader(EXERCISE_VIEW, null, this);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		Log.v(TAG, "+ ON RESUME +");
-		getSupportLoaderManager().restartLoader(EXERCISE_VIEW, null, this);
+		//getSupportLoaderManager().restartLoader(EXERCISE_VIEW, null, this);
 	}
 	
 	@Override

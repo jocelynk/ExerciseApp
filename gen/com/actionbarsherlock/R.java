@@ -960,6 +960,7 @@ containing a value of this type.
         public static final int menu_insert_workout=0x7f09000d;
         public static final int menu_view=0x7f090010;
         public static final int name=0x7f090014;
+        public static final int no=0x7f090028;
         public static final int no_exercises=0x7f09001d;
         public static final int no_workouts=0x7f09000c;
         public static final int num_exercises=0x7f090026;
@@ -972,6 +973,7 @@ containing a value of this type.
         public static final int workout_routine_edit_title=0x7f09001a;
         public static final int workout_routine_view_title=0x7f09001b;
         public static final int workout_routines=0x7f09000b;
+        public static final int yes=0x7f090027;
     }
     public static final class style {
         public static final int AppTheme=0x7f0a0058;
