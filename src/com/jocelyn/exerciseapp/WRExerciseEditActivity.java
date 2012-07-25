@@ -46,6 +46,8 @@ public class WRExerciseEditActivity extends SherlockFragmentActivity {
         FragmentManager fm = getSupportFragmentManager();
         ExerciseTabFragment tabFragment = (ExerciseTabFragment) fm.findFragmentById(R.id.fragment_tab);
         tabFragment.gotoListView();
+        
+        //need to change so it saves view
     }
 	
 	

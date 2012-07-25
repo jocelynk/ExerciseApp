@@ -36,7 +36,6 @@ public class ExerciseRandomTab extends SherlockFragment {
 	private Button randomizeButton;
 	private Button cancelButton;
 
-	private EditText q1;
 	private EditText c1;
 	private EditText c2;
 	private EditText c3;

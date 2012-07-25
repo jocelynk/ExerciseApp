@@ -129,7 +129,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 	protected void onResume() {
 		super.onResume();
 		Log.v(TAG, "+ ON RESUME +");
-		//getSupportLoaderManager().restartLoader(EXERCISE_VIEW, null, this);
+		getSupportLoaderManager().restartLoader(EXERCISE_VIEW, null, this);
 	}
 	
 	@Override
