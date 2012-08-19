@@ -81,8 +81,6 @@ public class WRListActivity extends SherlockFragmentActivity implements LoaderMa
 		    }
 		 });
 
-		   
-		   
 	    //setListAdapter(adapter);
 	    getSupportLoaderManager().initLoader(WR_LIST_LOADER, null, this);
 	    registerForContextMenu(lv);

@@ -11,6 +11,7 @@ public final class ExerciseAppManager {
 	private static final String WORKOUTS_PATH = "workouts";
 	private static final String EXERCISES_PATH = "exercises";
 	private static final String WR_EXERCISES_PATH = "wr_exercises";
+	private static final String RECORDS_PATH = "records";
 	
 	//this class cannot be instantiated
 	private ExerciseAppManager() {}
@@ -29,6 +30,10 @@ public final class ExerciseAppManager {
 
 	public static String getWrExercisesPath() {
 		return WR_EXERCISES_PATH;
+	}
+	
+	public static String getRecordsPath() {
+		return RECORDS_PATH;
 	}
 
 	public interface WorkoutsColumns {
@@ -52,6 +57,15 @@ public final class ExerciseAppManager {
 		String COLUMN_EXERCISE_ID = "WorkoutRoutineExercises.exercise_id";
 	}
 	
+	public interface RecordsColumns {
+		
+		public static final String COLUMN_ID = "Records._id";
+		public static final String COLUMN_WRKT_RTNE_E_ID = "Records.workout_exercise_id";
+		public static final String COLUMN_E_ATTR_ID = "Records.exercise_attribute_id";
+		public static final String COLUMN_DESCRIPTION = "Records.description";
+		public static final String COLUMN_DATE = "Records.date";
+		public static final String COLUMN_VALUE = "Records.value";
+	}
 	
 	public static final class Workouts implements BaseColumns, WorkoutsColumns {
 		
@@ -116,6 +130,26 @@ public static final class WRExercises implements BaseColumns, WRExercisesColumns
             return CONTENT_URI.buildUpon().appendPath(WORKOUTS_PATH).appendPath(workoutId).build();
         }
 	}
+
+public static final class Records implements BaseColumns, WorkoutsColumns {
+	
+	//this class cannot be instantiated
+	private Records() {}
+	
+	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
+    + "/records";
+	
+	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+    + "/records";
+	
+	public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(getRecordsPath()).build();
+	
+	public static Uri buildRecordIdUri(String recordId) {
+        return CONTENT_URI.buildUpon().appendPath(recordId).build();
+    }
+	
+	
+}
     
 
 }

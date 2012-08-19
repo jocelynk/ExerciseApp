@@ -16,10 +16,12 @@ import android.util.Log;
 
 import com.jocelyn.exerciseapp.data.ExerciseDB;
 import com.jocelyn.exerciseapp.data.ExerciseTable;
+import com.jocelyn.exerciseapp.data.RecordTable;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineExerciseTable;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Exercises;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.ExercisesColumns;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Records;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercises;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercisesColumns;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
@@ -51,10 +53,12 @@ public class ExerciseAppProvider extends ContentProvider {
 	//WRE with Workout ID
 	public static final int WRE_WORKOUT_ID = 500;
 	
-
+	//Records
+	public static final int RECORDS = 600;
+	public static final int RECORD_ID = 601;
 	private static final boolean DEBUG = true;
 
-	private static final int DISTINCT_EXERCISE = 500;
+	private static final int DISTINCT_EXERCISE = 501;
 	
 	static {
 		sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -76,7 +80,8 @@ public class ExerciseAppProvider extends ContentProvider {
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() , WR_EXERCISES);
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWrExercisesPath() + "/#", WR_EXERCISE_ID);
 	    
-	  
+	    //Records
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getRecordsPath() , RECORDS);
 	   
 
 	}
@@ -190,6 +195,13 @@ public class ExerciseAppProvider extends ContentProvider {
 			rowId = mDB.getWritableDatabase().insert(WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE , "", values);
         if (rowId > 0) {
         	newUri = WRExercises.buildWRExerciseIdUri(""+rowId);
+            getContext().getContentResolver().notifyChange(newUri, null);
+            return newUri;
+        }
+		case RECORDS:
+			rowId = mDB.getWritableDatabase().insert(RecordTable.TABLE_RECORD , "", values);
+        if (rowId > 0) {
+        	newUri = Records.buildRecordIdUri(""+rowId);
             getContext().getContentResolver().notifyChange(newUri, null);
             return newUri;
         }

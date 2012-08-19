@@ -78,7 +78,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 		lv.setEmptyView(findViewById(android.R.id.empty));
 
 		lv.setClickable(true);
-		lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		/*lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 		@Override
 	    public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
@@ -90,7 +90,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 			    if (exercise_id != null && exercise_id.moveToFirst()) {
 			    	 name = exercise_id.getString(exercise_id
 							.getColumnIndexOrThrow(ExerciseTable.COLUMN_NAME));
-			    	 
+			    	 E
 					 e_id = exercise_id
 							.getLong(exercise_id
 									.getColumnIndexOrThrow(WorkoutRoutineExerciseTable.COLUMN_EXERCISE_ID));
@@ -103,7 +103,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 				i.putExtra(WorkoutRoutineExerciseTable.COLUMN_EXERCISE_ID, e_id);
 				startActivityForResult(i, ACTIVITY_VIEW);
 		    }
-		 });
+		 });*/
 		getSupportLoaderManager().initLoader(WR_VIEW, null, this);
 		getSupportLoaderManager().initLoader(EXERCISE_VIEW, null, this);
 	    
@@ -168,6 +168,27 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
 		switch (item.getItemId()) {
+		case R.id.add_record:
+			final Intent i = new Intent(this, RecordExerciseEditActivity.class);	
+			String[] projection = {ExercisesColumns.NAME, WRExercisesColumns.COLUMN_ID, WRExercisesColumns.COLUMN_EXERCISE_ID};
+		    Cursor exercise_id = getContentResolver().query(WRExercises.buildWRExerciseIdUri(""+info.id), projection, null, null, null);
+		    String name = "";
+		    Long e_id = (long) -1;
+		    if (exercise_id != null && exercise_id.moveToFirst()) {
+		    	 name = exercise_id.getString(exercise_id
+						.getColumnIndexOrThrow(ExerciseTable.COLUMN_NAME));
+		    	 
+				 e_id = exercise_id
+						.getLong(exercise_id
+								.getColumnIndexOrThrow(WorkoutRoutineExerciseTable.COLUMN_EXERCISE_ID));
+				
+			}	
+		    exercise_id.close();
+		    Log.d(TAG, "INFO.ID = " + info.id);
+		    i.putExtra("WRE ID", info.id);
+			i.putExtra("Exercise ID", e_id);
+			startActivityForResult(i, ACTIVITY_VIEW);
+			return true;
 		case R.id.menu_delete:
 			//mDbAdapter.deleteExerciseFromWorkout(info.id);
 			getContentResolver().delete(WRExercises.buildWRExerciseIdUri(""+info.id), null, null);
