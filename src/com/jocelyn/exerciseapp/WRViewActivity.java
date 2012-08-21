@@ -187,7 +187,11 @@ public class WRViewActivity extends SherlockFragmentActivity implements LoaderMa
 		    Log.d(TAG, "INFO.ID = " + info.id);
 		    i.putExtra("WRE ID", info.id);
 			i.putExtra("Exercise ID", e_id);
-			startActivityForResult(i, ACTIVITY_VIEW);
+			startActivityForResult(i, ACTIVITY_CREATE);
+			return true;
+		case R.id.view_records:
+			final Intent in = new Intent(this, RecordCalendarActivity.class);
+			startActivityForResult(in, ACTIVITY_VIEW);
 			return true;
 		case R.id.menu_delete:
 			//mDbAdapter.deleteExerciseFromWorkout(info.id);

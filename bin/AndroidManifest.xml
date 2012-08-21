@@ -40,6 +40,9 @@
        <activity
             android:name=".WRExerciseEditActivity"
              />
+        <activity
+            android:name=".RecordCalendarActivity"
+             />
     </application>
 
 </manifest>

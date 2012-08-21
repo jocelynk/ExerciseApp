@@ -14,6 +14,7 @@ public class RecordTable {
 	public static final String COLUMN_DESCRIPTION = "description";
 	public static final String COLUMN_DATE = "date";
 	public static final String COLUMN_VALUE = "value";
+	public static final String COLUMN_TIME = "time";
 	
 	//Database creation SQL statement
 	private static final String DATABASE_CREATE = "create table " 
@@ -23,6 +24,7 @@ public class RecordTable {
 		+ COLUMN_DATE + " text not null, "
 		+ COLUMN_VALUE + " double not null, "
 		+ COLUMN_DESCRIPTION + " text null, "
+		+ COLUMN_TIME + " real not null, "
 		+ COLUMN_WRKT_RTNE_E_ID + " integer not null REFERENCES " 
 		+ WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE 
 		+ "("+ WorkoutRoutineExerciseTable.COLUMN_ID + "), "

@@ -2,6 +2,7 @@ package com.jocelyn.exerciseapp;
 
 
 import java.util.Calendar;
+import java.util.Date;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -75,7 +76,6 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 			wreRowId = extras != null ? extras
 					.getLong("WRE ID") : null;
 		}
-		Log.v(TAG, "wreRowID = " + wreRowId);
 
 		eRowId = (savedInstanceState == null) ? null
 				: (Long) savedInstanceState
@@ -94,6 +94,7 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 
 		Log.v(TAG, "Exercise id: " + eRowId);
 		switch (eRowId.intValue()) {
+		//case 1-3: Cardio
 		case 1:
 		case 2:
 		case 3:
@@ -244,6 +245,7 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 		CharSequence text = "Your Record has been saved.";
 		int duration = Toast.LENGTH_SHORT;
 		Toast toast = Toast.makeText(context, text, duration);
+		Date d = new Date();
 		switch (eRowId.intValue()) {
 		case 1:
 		case 2:
@@ -312,6 +314,7 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 						values1.put(RecordTable.COLUMN_DESCRIPTION, description);
 						values1.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
 						values1.put(RecordTable.COLUMN_E_ATTR_ID, 1);
+						values1.put(RecordTable.COLUMN_TIME, d.getTime());
 				        getContentResolver().insert(Records.CONTENT_URI, values1);
 						
 				        //mDbAdapter.createRecord(date, savedTime, 1, wreRowId,description);
@@ -321,6 +324,7 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 						values2.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
 						values2.put(RecordTable.COLUMN_DESCRIPTION, "");
 						values2.put(RecordTable.COLUMN_E_ATTR_ID, 2);
+						values2.put(RecordTable.COLUMN_TIME, d.getTime());
 				        getContentResolver().insert(Records.CONTENT_URI, values2);
 						//mDbAdapter.createRecord(date, val, 2, wreRowId, null);
 						toast.show();
@@ -332,6 +336,7 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 						values1.put(RecordTable.COLUMN_DESCRIPTION, description);
 						values1.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
 						values1.put(RecordTable.COLUMN_E_ATTR_ID, 3);
+						values1.put(RecordTable.COLUMN_TIME, d.getTime());
 				        getContentResolver().insert(Records.CONTENT_URI, values1);
 						//mDbAdapter.createRecord(date, savedTime, 3, wreRowId, description);
 						// distance
@@ -340,6 +345,7 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 						values2.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
 						values2.put(RecordTable.COLUMN_DESCRIPTION, "");
 						values2.put(RecordTable.COLUMN_E_ATTR_ID, 4);
+						values2.put(RecordTable.COLUMN_TIME, d.getTime());
 				        getContentResolver().insert(Records.CONTENT_URI, values2);
 						//mDbAdapter.createRecord(date, val, 4, wreRowId, null);
 						toast.show();
@@ -352,6 +358,7 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 						values1.put(RecordTable.COLUMN_DESCRIPTION, description);
 						values1.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
 						values1.put(RecordTable.COLUMN_E_ATTR_ID, 5);
+						values1.put(RecordTable.COLUMN_TIME, d.getTime());
 				        getContentResolver().insert(Records.CONTENT_URI, values1);
 						//mDbAdapter.createRecord(date, savedTime, 5, wreRowId, description);
 						// distance
@@ -360,6 +367,7 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 						values2.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
 						values2.put(RecordTable.COLUMN_DESCRIPTION, "");
 						values2.put(RecordTable.COLUMN_E_ATTR_ID, 6);
+						values2.put(RecordTable.COLUMN_TIME, d.getTime());
 				        getContentResolver().insert(Records.CONTENT_URI, values2);
 						//mDbAdapter.createRecord(date, val, 6, wreRowId, null);
 						toast.show();

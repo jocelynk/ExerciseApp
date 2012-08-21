@@ -273,7 +273,6 @@ public class ExerciseAppProvider extends ContentProvider {
 	    default:
 	        throw new IllegalArgumentException("Unknown URI");
 	    }
-	    Log.v(TAG, "asdf" + useDistinct);
 	    qb.setDistinct(useDistinct);
 	    Cursor cursor = qb.query(mDB.getReadableDatabase(),
 	            projection, selection, selectionArgs, groupBy, null, sortOrder);
