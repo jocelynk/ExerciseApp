@@ -264,6 +264,7 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 
 			double savedTime = (hr == 0.0 && min == 0.0 && sec == 0.0) ? -1
 					: ((hr * 60.0) + min + (sec / 60.0));
+			//distance
 			double val = !TextUtils.isEmpty(value) ? Double.parseDouble(value)
 					: -1;
 			String description = TextUtils.isEmpty(des) ? null : des;
@@ -304,72 +305,47 @@ public class RecordExerciseEditActivity extends SherlockFragmentActivity impleme
 				}*/
 			//} else {
 				if (savedTime != -1 && val != -1) {
-					ContentValues values1 = new ContentValues();
-					ContentValues values2 = new ContentValues();
+					ContentValues values = new ContentValues();
 					if (eRowId.intValue() == 1) {
 						// time
 						
-						values1.put(RecordTable.COLUMN_DATE, date);
-						values1.put(RecordTable.COLUMN_VALUE, savedTime);
-						values1.put(RecordTable.COLUMN_DESCRIPTION, description);
-						values1.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
-						values1.put(RecordTable.COLUMN_E_ATTR_ID, 1);
-						values1.put(RecordTable.COLUMN_TIME, d.getTime());
-				        getContentResolver().insert(Records.CONTENT_URI, values1);
+						values.put(RecordTable.COLUMN_DATE, date);
+						values.put(RecordTable.COLUMN_DESCRIPTION, description);
+						values.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
+						values.put(RecordTable.COLUMN_TIME, d.getTime());
+						values.put(RecordTable.COLUMN_VALUE1, savedTime);
+						values.put(RecordTable.COLUMN_E_ATTR_ID1, 1);
+						values.put(RecordTable.COLUMN_VALUE2, val); //distance
+						values.put(RecordTable.COLUMN_E_ATTR_ID2, 2);
+				        getContentResolver().insert(Records.CONTENT_URI, values);
 						
-				        //mDbAdapter.createRecord(date, savedTime, 1, wreRowId,description);
-						// distance
-				        values2.put(RecordTable.COLUMN_DATE, date);
-						values2.put(RecordTable.COLUMN_VALUE, val);
-						values2.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
-						values2.put(RecordTable.COLUMN_DESCRIPTION, "");
-						values2.put(RecordTable.COLUMN_E_ATTR_ID, 2);
-						values2.put(RecordTable.COLUMN_TIME, d.getTime());
-				        getContentResolver().insert(Records.CONTENT_URI, values2);
-						//mDbAdapter.createRecord(date, val, 2, wreRowId, null);
 						toast.show();
 						saved = true;
 					} else if (eRowId.intValue() == 2) {
 						// time
-						values1.put(RecordTable.COLUMN_DATE, date);
-						values1.put(RecordTable.COLUMN_VALUE, savedTime);
-						values1.put(RecordTable.COLUMN_DESCRIPTION, description);
-						values1.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
-						values1.put(RecordTable.COLUMN_E_ATTR_ID, 3);
-						values1.put(RecordTable.COLUMN_TIME, d.getTime());
-				        getContentResolver().insert(Records.CONTENT_URI, values1);
-						//mDbAdapter.createRecord(date, savedTime, 3, wreRowId, description);
-						// distance
-				        values2.put(RecordTable.COLUMN_DATE, date);
-						values2.put(RecordTable.COLUMN_VALUE, val);
-						values2.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
-						values2.put(RecordTable.COLUMN_DESCRIPTION, "");
-						values2.put(RecordTable.COLUMN_E_ATTR_ID, 4);
-						values2.put(RecordTable.COLUMN_TIME, d.getTime());
-				        getContentResolver().insert(Records.CONTENT_URI, values2);
-						//mDbAdapter.createRecord(date, val, 4, wreRowId, null);
+						values.put(RecordTable.COLUMN_DATE, date);
+						values.put(RecordTable.COLUMN_DESCRIPTION, description);
+						values.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
+						values.put(RecordTable.COLUMN_TIME, d.getTime());
+						values.put(RecordTable.COLUMN_VALUE1, savedTime);
+						values.put(RecordTable.COLUMN_E_ATTR_ID1, 3);
+						values.put(RecordTable.COLUMN_VALUE2, val); //distance
+						values.put(RecordTable.COLUMN_E_ATTR_ID2, 4);
+						getContentResolver().insert(Records.CONTENT_URI, values);
 						toast.show();
 						saved = true;
 
 					} else if (eRowId.intValue() == 3) {
 						// time
-						values1.put(RecordTable.COLUMN_DATE, date);
-						values1.put(RecordTable.COLUMN_VALUE, savedTime);
-						values1.put(RecordTable.COLUMN_DESCRIPTION, description);
-						values1.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
-						values1.put(RecordTable.COLUMN_E_ATTR_ID, 5);
-						values1.put(RecordTable.COLUMN_TIME, d.getTime());
-				        getContentResolver().insert(Records.CONTENT_URI, values1);
-						//mDbAdapter.createRecord(date, savedTime, 5, wreRowId, description);
-						// distance
-				        values2.put(RecordTable.COLUMN_DATE, date);
-						values2.put(RecordTable.COLUMN_VALUE, val);
-						values2.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
-						values2.put(RecordTable.COLUMN_DESCRIPTION, "");
-						values2.put(RecordTable.COLUMN_E_ATTR_ID, 6);
-						values2.put(RecordTable.COLUMN_TIME, d.getTime());
-				        getContentResolver().insert(Records.CONTENT_URI, values2);
-						//mDbAdapter.createRecord(date, val, 6, wreRowId, null);
+						values.put(RecordTable.COLUMN_DATE, date);
+						values.put(RecordTable.COLUMN_DESCRIPTION, description);
+						values.put(RecordTable.COLUMN_WRKT_RTNE_E_ID, wreRowId);
+						values.put(RecordTable.COLUMN_TIME, d.getTime());
+						values.put(RecordTable.COLUMN_VALUE1, savedTime);
+						values.put(RecordTable.COLUMN_E_ATTR_ID1, 5);
+						values.put(RecordTable.COLUMN_VALUE2, val); //distance
+						values.put(RecordTable.COLUMN_E_ATTR_ID2, 6);
+						getContentResolver().insert(Records.CONTENT_URI, values);
 						toast.show();
 						saved = true;
 

@@ -61,10 +61,14 @@ public final class ExerciseAppManager {
 		
 		public static final String COLUMN_ID = "Records._id";
 		public static final String COLUMN_WRKT_RTNE_E_ID = "Records.workout_exercise_id";
-		public static final String COLUMN_E_ATTR_ID = "Records.exercise_attribute_id";
 		public static final String COLUMN_DESCRIPTION = "Records.description";
 		public static final String COLUMN_DATE = "Records.date";
-		public static final String COLUMN_VALUE = "Records.value";
+		public static final String COLUMN_VALUE1 = "Records.value1";
+		public static final String COLUMN_E_ATTR_ID1 = "Records.exercise_attribute_id1";
+		public static final String COLUMN_VALUE2 = "Records.value2";
+		public static final String COLUMN_E_ATTR_ID2 = "Records.exercise_attribute_id2";
+		public static final String COLUMN_VALUE3 = "Records.value3";
+		public static final String COLUMN_E_ATTR_ID3 = "Records.exercise_attribute_id3";
 	}
 	
 	public static final class Workouts implements BaseColumns, WorkoutsColumns {
