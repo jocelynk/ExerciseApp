@@ -93,6 +93,12 @@ public final class ExerciseAppManager {
 		public static Uri buildWorkoutIdExerciseUri(String workoutId) {
             return CONTENT_URI.buildUpon().appendPath(workoutId).appendPath(EXERCISES_PATH).build();
         }
+		
+		//build Uri for getting all exercises of a specific workout and the top record for each
+		//workouts/#/exercises_records
+		public static Uri buildWorkoutIdExerciseRecordsUri(String workoutId) {
+	        return CONTENT_URI.buildUpon().appendPath(workoutId).appendPath(EXERCISES_PATH).appendPath(RECORDS_PATH).build();
+	    }
 	}
 	
 	public static final class Exercises implements BaseColumns, ExercisesColumns {

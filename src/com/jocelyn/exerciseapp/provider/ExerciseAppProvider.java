@@ -11,6 +11,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.v4.content.CursorLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -22,6 +23,7 @@ import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Exercises;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.ExercisesColumns;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Records;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.RecordsColumns;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercises;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercisesColumns;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
@@ -49,6 +51,8 @@ public class ExerciseAppProvider extends ContentProvider {
 	
 	//Workout with Exercises
 	public static final int WR_ID_EXERCISES = 400;
+	//Workout with Exercises and Records
+	public static final int WR_ID_EXERCISES_RECORDS = 401;
 	
 	//WRE with Workout ID
 	public static final int WRE_WORKOUT_ID = 500;
@@ -82,6 +86,8 @@ public class ExerciseAppProvider extends ContentProvider {
 	    
 	    //Records
 	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getRecordsPath() , RECORDS);
+	    //gets all Exercises of a specific Workout
+	    sURIMatcher.addURI(ExerciseAppManager.getAuthority(), ExerciseAppManager.getWorkoutsPath() + "/#/" +  ExerciseAppManager.getExercisesPath() + "/" + ExerciseAppManager.getRecordsPath(),  WR_ID_EXERCISES_RECORDS);
 	   
 
 	}
@@ -101,8 +107,7 @@ public class ExerciseAppProvider extends ContentProvider {
 	    case WORKOUT_ID:
 	        return Workouts.CONTENT_ITEM_TYPE;
 	    case WR_ID_EXERCISES:
-	    	return WRExercises.CONTENT_TYPE;
-	    	
+	    	return WRExercises.CONTENT_TYPE;	
 	    case EXERCISES:
 	    	return Exercises.CONTENT_TYPE;
 	    case EXERCISE_ID:
@@ -111,6 +116,8 @@ public class ExerciseAppProvider extends ContentProvider {
 	    	return WRExercises.CONTENT_TYPE; //need to think about uri for joining tables*/
 	    case WR_EXERCISE_ID:
 	        return WRExercises.CONTENT_ITEM_TYPE;
+	    case WR_ID_EXERCISES_RECORDS:
+	    	return WRExercises.CONTENT_TYPE;	
 	    default:
 	        throw new IllegalArgumentException("Unknown URI " + uri);
 	    }
@@ -249,7 +256,19 @@ public class ExerciseAppProvider extends ContentProvider {
 	    			+ " = " + uri.getPathSegments().get(1));
 	    	break;
 	    	//does it make a difference if search from workout table or wrexercise table?
-	    	
+	    case WR_ID_EXERCISES_RECORDS:
+	    	Log.v(TAG, "WR_ID_EXERCISES_RECORDS = " + WR_ID_EXERCISES_RECORDS);
+	    	qb.setTables(WorkoutRoutineTable.TABLE_WORKOUTROUTINE + ", " +  ExerciseTable.TABLE_EXERCISE + ", " +  WorkoutRoutineExerciseTable.TABLE_WORKOUTROUTINE_EXERCISE + ", " +  RecordTable.TABLE_RECORD);
+	    	qb.appendWhere(WorkoutsColumns.COLUMN_ID
+	    			+ " = " + WRExercisesColumns.COLUMN_WORKOUT_ID 
+	    			+ " AND " +  WRExercisesColumns.COLUMN_EXERCISE_ID 
+	    			+ " = " + ExercisesColumns.COLUMN_ID 
+	    			+ " AND " + WRExercisesColumns.COLUMN_WORKOUT_ID 
+	    			+ " = " + uri.getPathSegments().get(1)
+	    			+ " AND " + WRExercisesColumns.COLUMN_ID 
+	    			+ " = " + RecordsColumns.COLUMN_WRKT_RTNE_E_ID);
+		   
+	    	break;
 	    case EXERCISE_ID:
 		    qb.setTables(ExerciseTable.TABLE_EXERCISE);
 	        qb.appendWhere(ExerciseTable.COLUMN_ID + "=" + uri.getLastPathSegment());

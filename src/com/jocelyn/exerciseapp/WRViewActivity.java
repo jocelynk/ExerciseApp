@@ -8,6 +8,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -27,6 +28,8 @@ import com.jocelyn.exerciseapp.data.RecordTable;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineExerciseTable;
 import com.jocelyn.exerciseapp.data.WorkoutRoutineTable;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.ExercisesColumns;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Records;
+import com.jocelyn.exerciseapp.provider.ExerciseAppManager.RecordsColumns;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercises;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.WRExercisesColumns;
 import com.jocelyn.exerciseapp.provider.ExerciseAppManager.Workouts;
@@ -46,7 +49,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements
 	private TextView mDescriptionText;
 	private Long mRowId;
 
-	// private SimpleCursorAdapter adapter;
+	 //private SimpleCursorAdapter adapter;
 	private ListAdapter adapter;
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,16 +68,16 @@ public class WRViewActivity extends SherlockFragmentActivity implements
 					.getLong(WorkoutRoutineTable.COLUMN_ID) : null;
 		}
 
-		/*
-		 * String[] uiBindFrom = { ExerciseTable.COLUMN_NAME }; int[] uiBindTo =
-		 * { R.id.text1 };
-		 * 
-		 * adapter = new SimpleCursorAdapter(getApplicationContext(),
-		 * R.layout.exercises_row, null, uiBindFrom, uiBindTo,
-		 * CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		 */
+		
+		 /*String[] uiBindFrom = { ExerciseTable.COLUMN_NAME }; 
+		 int[] uiBindTo = { R.id.text1 };
+		 
+		 adapter = new SimpleCursorAdapter(getApplicationContext(),
+		 R.layout.exercises_row, null, uiBindFrom, uiBindTo,
+		0);*/
+		 
 		adapter = new ListAdapter(getApplicationContext(), null, 0);
-		//final Intent i = new Intent(this, RecordExerciseActivity.class);
+		final Intent i = new Intent(this, RecordExerciseActivity.class);
 		final ListView lv = (ListView) findViewById(android.R.id.list);
 
 		lv.setAdapter(adapter);
@@ -254,9 +257,11 @@ public class WRViewActivity extends SherlockFragmentActivity implements
 			break;
 		default:
 			Log.d(TAG, "DEFAULT");
-			String[] columns = { ExercisesColumns.NAME,
-					WRExercisesColumns.COLUMN_ID };
-			cur = new CursorLoader(this, Workouts.buildWorkoutIdExerciseUri(""
+			//String[] columns = { ExercisesColumns.NAME,
+					//WRExercisesColumns.COLUMN_ID };
+			String[] columns = { ExercisesColumns.NAME, WRExercisesColumns.COLUMN_ID,  
+					ExercisesColumns.CATEGORY, RecordsColumns.COLUMN_VALUE1, RecordsColumns.COLUMN_VALUE2, RecordsColumns.COLUMN_VALUE3 };
+			cur = new CursorLoader(this, Workouts.buildWorkoutIdExerciseRecordsUri(""
 					+ mRowId), columns, null, null, null);
 
 			break;
@@ -355,8 +360,7 @@ public class WRViewActivity extends SherlockFragmentActivity implements
 					.equals("Cardio")) {
 				holder.textView1.setText(cursor.getString(cursor
 						.getColumnIndex(ExerciseTable.COLUMN_NAME)));
-				// need to make a query that gets exercise attributes vs
-				// hardcoding it in
+				// need to make a query that gets exercise attributes and compares number to know which to set vs hardcoding it in
 				String s1 = cursor.getString(cursor
 						.getColumnIndex(RecordTable.COLUMN_VALUE1));
 				String s2 = cursor.getString(cursor
