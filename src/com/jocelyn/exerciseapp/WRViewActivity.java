@@ -260,6 +260,8 @@ public class WRViewActivity extends SherlockFragmentActivity implements
 					+ mRowId), columns, null, null, null);
 
 			break;
+			//Select Exercises.Name, WRExercises.ID, RecordTable.value1 RecordTable.value2
+			//from 
 		}
 		return cur;
 	}
